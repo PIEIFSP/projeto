@@ -1,0 +1,130 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: #f6f6f6;
+    font-family: Arial, sans-serif;
+}
+
+/* ======= SIDEBAR ======= */
+aside {
+    width: 70px;
+    background-color: #222;
+    color: white;
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+aside.open {
+    width: 250px;
+}
+
+/* Topo da barra lateral */
+.topo-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+/* Container da logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    transition: height 0.3s;
+    border-radius: 50%;
+}
+
+aside.open .logo {
+    height: 60px;
+}
+
+/* Botão de abrir/fechar */
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+}
+
+nav a {
+    color: #ccc;
+    padding: 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s, color 0.3s;
+}
+
+nav a:hover,
+nav a.active {
+    background-color: #444;
+    color: #fff;
+}
+
+/* ======= CONTEÚDO PRINCIPAL ======= */
+main {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.dashboard {
+    flex: 2;
+}
+
+.cards {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.card {
+    background: white;
+    flex: 1;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Calendário */
+.calendario {
+    flex: 1;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.calendario ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.calendario li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
