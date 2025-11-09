@@ -7,6 +7,8 @@
         <option value="$PROJECT_DIR$/tests/Feature" />
         <option value="$PROJECT_DIR$/ifsp-pcc-projeto/backend/tests/Unit" />
         <option value="$PROJECT_DIR$/ifsp-pcc-projeto/backend/tests/Feature" />
+        <option value="$PROJECT_DIR$/backend/tests/Unit" />
+        <option value="$PROJECT_DIR$/backend/tests/Feature" />
       </list>
     </option>
   </component>

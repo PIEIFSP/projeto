@@ -23,6 +23,8 @@
 /backend/Homestead.yaml
 /backend/Thumbs.db
 
+*:Zone.Identifier
+
 
 /frontend/dist
 /frontend/tmp
