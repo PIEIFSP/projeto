@@ -1,10 +1,14 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Support\Facades\Hash;
+
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Database\Seeders\ClienteSeeder;
+use Database\Seeders\AgendamentoSeeder;
+use Database\Seeders\ServicoSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,11 +20,13 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('123456'),
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'password' => Hash::make('password'),
         ]);
 
-         $this->call(\Database\Seeders\AgendamentoSeeder::class);
+        $this->call(ClienteSeeder::class);
+        $this->call(ServicoSeeder::class);
+        $this->call(AgendamentoSeeder::class);
     }
 }

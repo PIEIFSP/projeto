@@ -4,33 +4,50 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Agendamento;
+use App\Models\Cliente;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Models\Servico;
 
 class AgendamentoSeeder extends Seeder
 {
     public function run(): void
     {
-        $usuarios = User::all(); // todos os usuários são funcionários
+        $user = User::first(); // usa o usuário de teste
+        $clientes = Cliente::all();
+        $servicos = Servico::all(); // assume que os serviços já existem
 
-        foreach ($usuarios as $usuario) {
-            Agendamento::create([
-                'user_id' => $usuario->id,
-                'nome_cliente' => 'Cliente Teste 1',
-                'servico' => 'Corte de cabelo',
-                'inicio' => Carbon::now()->addDay()->setHour(9)->setMinute(0),
-                'fim' => Carbon::now()->addDay()->setHour(10)->setMinute(0),
-                'valor_pago' => null,
-            ]);
+        $agendamentos = [
+            [
+                'ID_Cliente_FK' => $clientes[0]->ID_Cliente,
+                'ID_Servico_FK' => $servicos[0]->ID_Servico,
+                'Data_Hora_Inicio' => '2025-11-01 10:00:00',
+                'Data_Hora_Fim' => '2025-11-01 10:30:00',
+                'Valor_Pago_Ajustado' => 50.00,
+                'Status' => 'Confirmado',
+                'Observacao' => 'Cliente prefere atendimento rápido',
+            ],
+            [
+                'ID_Cliente_FK' => $clientes[1]->ID_Cliente,
+                'ID_Servico_FK' => $servicos[1]->ID_Servico,
+                'Data_Hora_Inicio' => '2025-11-01 11:00:00',
+                'Data_Hora_Fim' => '2025-11-01 11:45:00',
+                'Valor_Pago_Ajustado' => 70.00,
+                'Status' => 'Confirmado',
+                'Observacao' => null,
+            ],
+            [
+                'ID_Cliente_FK' => $clientes[2]->ID_Cliente,
+                'ID_Servico_FK' => $servicos[2]->ID_Servico,
+                'Data_Hora_Inicio' => '2025-11-01 12:00:00',
+                'Data_Hora_Fim' => '2025-11-01 12:40:00',
+                'Valor_Pago_Ajustado' => 30.00,
+                'Status' => 'Remarcado',
+                'Observacao' => 'Cliente pediu remarcação',
+            ],
+        ];
 
-            Agendamento::create([
-                'user_id' => $usuario->id,
-                'nome_cliente' => 'Cliente Teste 2',
-                'servico' => 'Manicure',
-                'inicio' => Carbon::now()->addDay()->setHour(10)->setMinute(30),
-                'fim' => Carbon::now()->addDay()->setHour(11)->setMinute(30),
-                'valor_pago' => null,
-            ]);
+        foreach ($agendamentos as $ag) {
+            Agendamento::create(array_merge($ag, ['ID_Usuario_FK' => $user->id]));
         }
     }
 }

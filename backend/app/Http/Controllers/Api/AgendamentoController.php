@@ -1,111 +1,104 @@
 <?php
-
+// app/Http/Controllers/Api/AgendamentoController.php
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Agendamento;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Models\Cliente;
+use App\Models\Servico;
+use App\Models\TransacaoFinanceira;
+use Illuminate\Http\Request;
 
-class AgendamentoController extends Controller
-{
-    // Criar agendamento manual
-    public function criar(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nome_cliente' => 'required|string',
-            'servico' => 'required|string',
-            'inicio' => 'required|date',
-            'fim' => 'required|date|after:inicio',
+class AgendamentoController extends Controller {
+
+    public function index(Request $request) {
+        $query = Agendamento::with(['cliente', 'servico', 'usuario']);
+        if ($request->has('usuario')) $query->where('ID_Usuario_FK', $request->usuario);
+        if ($request->has('data')) $query->whereDate('Data_Hora_Inicio', $request->data);
+        return $query->get();
+    }
+
+    public function store(Request $request) {
+        $data = $request->validate([
+            'ID_Usuario_FK'=>'required|exists:users,id',
+            'ID_Cliente_FK'=>'required|exists:clientes,ID_Cliente',
+            'ID_Servico_FK'=>'required|exists:servicos,ID_Servico',
+            'Data_Hora_Inicio'=>'required|date'
         ]);
+        $servico = Servico::findOrFail($data['ID_Servico_FK']);
+        $inicio = new \DateTime($data['Data_Hora_Inicio']);
+        $fim = (clone $inicio)->modify("+{$servico->Duracao_Minutos} minutes");
 
-        // Verifica disponibilidade do funcionário
-        $conflito = Agendamento::where('user_id', $request->user_id)
-            ->where(function ($q) use ($request) {
-                $q->whereBetween('inicio', [$request->inicio, $request->fim])
-                  ->orWhereBetween('fim', [$request->inicio, $request->fim]);
-            })
-            ->exists();
+        // Verifica disponibilidade
+        $conflito = Agendamento::where('ID_Usuario_FK', $data['ID_Usuario_FK'])
+            ->where(function($q) use ($inicio, $fim) {
+                $q->whereBetween('Data_Hora_Inicio', [$inicio, $fim])
+                  ->orWhereBetween('Data_Hora_Fim', [$inicio, $fim]);
+            })->exists();
 
-        if ($conflito) {
-            return response()->json(['erro' => 'Horário indisponível'], 400);
-        }
+        if ($conflito) return response()->json(['error'=>'Horário indisponível'], 409);
 
-        $agendamento = Agendamento::create($request->all());
-
+        $agendamento = Agendamento::create([
+            ...$data,
+            'Data_Hora_Fim'=>$fim,
+            'Valor_Pago_Ajustado'=>$servico->Valor
+        ]);
         return response()->json($agendamento, 201);
     }
+    public function buscarPorCliente($nome)
+{
+    // Busca o cliente pelo nome
+    $cliente = Cliente::where('Nome', 'like', "%{$nome}%")->first();
 
-    // Cancelar agendamento
-    public function cancelar(Agendamento $agendamento)
-    {
-        $agendamento->status = 'cancelado';
-        $agendamento->save();
-        return response()->json($agendamento);
+    if (!$cliente) {
+        return response()->json(['message' => 'Cliente não encontrado.'], 404);
     }
 
-    // Remarcar agendamento
-    public function remarcar(Request $request, Agendamento $agendamento)
-    {
-        $request->validate([
-            'inicio' => 'required|date',
-            'fim' => 'required|date|after:inicio',
+    // Busca os agendamentos vinculados a esse cliente
+    $agendamentos = Agendamento::where('ID_Cliente_FK', $cliente->ID_Cliente)
+        ->with(['cliente', 'servico', 'usuario']) // se tiver relacionamentos configurados
+        ->get();
+
+    if ($agendamentos->isEmpty()) {
+        return response()->json(['message' => 'Nenhum agendamento encontrado para este cliente.'], 404);
+    }
+
+    return response()->json($agendamentos);
+}
+
+   public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'ID_Usuario_FK' => 'required|exists:users,id',
+        'ID_Cliente_FK' => 'required|exists:clientes,ID_Cliente',
+        'ID_Servico_FK' => 'required|exists:servicos,ID_Servico',
+        'Valor_Pago_Ajustado' => 'nullable|numeric',
+        'Data_Hora_Inicio' => 'required|date',
+        'Data_Hora_Fim' => 'required|date|after:Data_Hora_Inicio',
+        'Status' => 'required|string',
+        'Observacao' => 'nullable|string',
+    ]);
+
+    $agendamento = Agendamento::findOrFail($id);
+    $agendamento->update($validated);
+
+    return response()->json([
+        'message' => 'Agendamento atualizado com sucesso!',
+        'data' => $agendamento
+    ]);
+}
+
+
+    public function concluir($id) {
+        $agendamento = Agendamento::findOrFail($id);
+        $agendamento->update(['Status'=>'Confirmado','Data_Registro_Pagamento'=>now()]);
+        TransacaoFinanceira::create([
+            'ID_Agendamento_FK'=>$agendamento->ID_Agendamento,
+            'Tipo'=>'Receita',
+            'Data'=>now(),
+            'Valor'=>$agendamento->Valor_Pago_Ajustado,
+            'Descricao'=>"Serviço {$agendamento->servico->Nome}",
+            'Categoria'=>'Serviços'
         ]);
-
-        // Verifica disponibilidade do funcionário
-        $conflito = Agendamento::where('user_id', $agendamento->user_id)
-            ->where('id', '!=', $agendamento->id)
-            ->where(function ($q) use ($request) {
-                $q->whereBetween('inicio', [$request->inicio, $request->fim])
-                  ->orWhereBetween('fim', [$request->inicio, $request->fim]);
-            })
-            ->exists();
-
-        if ($conflito) {
-            return response()->json(['erro' => 'Horário indisponível'], 400);
-        }
-
-        $agendamento->inicio = $request->inicio;
-        $agendamento->fim = $request->fim;
-        $agendamento->status = 'agendado';
-        $agendamento->save();
-
-        return response()->json($agendamento);
-    }
-
-    // Visualizar agenda por funcionário e por dia/semana
-    public function agenda(Request $request, User $user)
-    {
-        $query = Agendamento::where('user_id', $user->id);
-
-        if ($request->filled('data')) {
-            $data = Carbon::parse($request->data);
-            $query->whereDate('inicio', $data);
-        }
-
-        if ($request->filled('semana')) {
-            $data = Carbon::parse($request->semana);
-            $query->whereBetween('inicio', [$data->startOfWeek(), $data->endOfWeek()]);
-        }
-
-        $agendamentos = $query->orderBy('inicio')->get();
-
-        return response()->json($agendamentos);
-    }
-
-    // Registrar entrada / pagamento
-    public function registrarEntrada(Request $request, Agendamento $agendamento)
-    {
-        $request->validate([
-            'valor_pago' => 'required|numeric|min:0',
-        ]);
-
-        $agendamento->valor_pago = $request->valor_pago;
-        $agendamento->status = 'concluido';
-        $agendamento->save();
-
-        return response()->json($agendamento);
+        return response()->json(['message'=>'Serviço concluído e registrado no financeiro']);
     }
 }
