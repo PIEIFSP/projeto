@@ -22,40 +22,40 @@ export class AgendaApiService {
 
     // Listar agendamentos
     listar(): Observable<Appointment[]> {
-        return this.http.get<Appointment[]>(`${this.baseUrl}/appointments`, { headers: this.getAuthHeaders() });
+        return this.http.get<Appointment[]>(`${this.baseUrl}/agendamentos`, { headers: this.getAuthHeaders() });
     }
 
     // Criar agendamento
     criar(appointmentPayload: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/appointments`, appointmentPayload, { headers: this.getAuthHeaders() });
+        return this.http.post<any>(`${this.baseUrl}/agendamentos`, appointmentPayload, { headers: this.getAuthHeaders() });
     }
 
     // Atualizar agendamento
     atualizar(id: number, appointment: Appointment): Observable<Appointment> {
-        return this.http.put<Appointment>(`${this.baseUrl}/appointments/${id}`, appointment, { headers: this.getAuthHeaders() });
+        return this.http.put<Appointment>(`${this.baseUrl}/agendamentos/${id}`, appointment, { headers: this.getAuthHeaders() });
     }
 
     // Excluir agendamento
     excluir(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/appointments/${id}`, { headers: this.getAuthHeaders() });
+        return this.http.delete<void>(`${this.baseUrl}/agendamentos/${id}`, { headers: this.getAuthHeaders() });
     }
 
     cancelar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/appointments/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.delete<void>(`${this.baseUrl}/agendamentos/${id}`, { headers: this.getAuthHeaders() });
     } 
     
     // Listar clientes
     listarClientes(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/clients`, { headers: this.getAuthHeaders() });
+        return this.http.get<any[]>(`${this.baseUrl}/clientes`, { headers: this.getAuthHeaders() });
     }
 
     // Listar profissionais
     listarProfissionais(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/professionals`, { headers: this.getAuthHeaders() });
+        return this.http.get<any[]>(`${this.baseUrl}/profissionais`, { headers: this.getAuthHeaders() });
     }
 
     // Listar serviços
     listarServicos(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/services`, { headers: this.getAuthHeaders() });
+        return this.http.get<any[]>(`${this.baseUrl}/servicos`, { headers: this.getAuthHeaders() });
     }
 }

@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "GET",
-        "url": "/api/professionals"
+        "url": "/api/profissionais"
     },
     "response": {
         "status": 200,

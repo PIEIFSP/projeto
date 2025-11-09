@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "POST",
-        "url": "/api/appointments"
+        "url": "/api/agendamentos"
     },
     "response": {
         "status": 201,
