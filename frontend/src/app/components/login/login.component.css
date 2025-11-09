@@ -1,0 +1,52 @@
+
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #5c6bc0;
+  }
+
+  section {
+    display: flex;
+    background-color: #EEEEEE;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px;
+    border-radius: 8px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mat-form-field + .mat-form-field {
+    margin-top: 1rem;
+  }
+
+  .button {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .error-message {
+    color: #f44336;
+    text-align: center;
+    margin: 1rem 0;
+    font-weight: 500;
+  }
+
+.logo-login {
+
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 20px auto; 
+}

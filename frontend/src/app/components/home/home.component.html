@@ -1,0 +1,52 @@
+<div class="container">
+    <!-- BARRA LATERAL -->
+    <aside [class.open]="sidebarOpen">
+        <div class="topo-sidebar">
+            <div class="logo-container">
+                <img src="imagens/login/logo.png" alt="Logo do Studio" class="logo">
+            </div>
+
+            <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+        </div>
+
+        <nav>
+            <a routerLink="/home" routerLinkActive="active">🏠 <span *ngIf="sidebarOpen">Home</span></a>
+            <a routerLink="/financeiro" routerLinkActive="active">💰 <span *ngIf="sidebarOpen">Financeiro</span></a>
+            <a routerLink="/agenda" routerLinkActive="active">📅 <span *ngIf="sidebarOpen">Agenda</span></a>
+            <a routerLink="/clientes" routerLinkActive="active">👩‍🦰 <span *ngIf="sidebarOpen">Clientes</span></a>
+            <a routerLink="/profissionais" routerLinkActive="active">💇 <span
+                    *ngIf="sidebarOpen">Profissionais</span></a>
+        </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+        <section class="dashboard">
+            <h2>Dashboard</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Procedimentos na Semana</h3>
+                    <p>{{ dadosSemana.procedimentos }}</p>
+                </div>
+                <div class="card">
+                    <h3>Procedimentos no Mês</h3>
+                    <p>{{ dadosMes.procedimentos }}</p>
+                </div>
+                <div class="card">
+                    <h3>Valor Total do Mês</h3>
+                    <p>R$ {{ dadosMes.valor | number:'1.2-2' }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="calendario">
+            <h2>Procedimentos de Hoje</h2>
+            <ul>
+                <li *ngIf="procedimentosHoje.length === 0">Nenhum procedimento agendado.</li>
+                <li *ngFor="let p of procedimentosHoje">
+                    <strong>{{ p.horario }}</strong> - {{ p.cliente }} ({{ p.servico }})
+                </li>
+            </ul>
+        </section>
+    </main>
+</div>
