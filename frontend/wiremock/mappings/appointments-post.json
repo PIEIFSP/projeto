@@ -1,0 +1,16 @@
+{
+    "request": {
+        "method": "POST",
+        "url": "/api/appointments"
+    },
+    "response": {
+        "status": 201,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        },
+        "body": "{ \"id\": 999, \"client_id\": {{jsonPath request.body '$.client_id'}}, \"professional_id\": {{jsonPath request.body '$.professional_id'}}, \"service_id\": {{jsonPath request.body '$.service_id'}}, \"start_at\": \"{{jsonPath request.body '$.start_at'}}\", \"end_at\": \"{{jsonPath request.body '$.end_at'}}\", \"status\": \"{{jsonPath request.body '$.status'}}\", \"observacoes\": \"{{jsonPath request.body '$.observacoes'}}\" }"
+    }
+}

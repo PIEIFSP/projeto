@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "nome": "Banho de gel",
+        "duracao": 120
+    },
+    {
+        "id": 2,
+        "nome": "Design de sobrancelha",
+        "duracao": 60
+    }
+]

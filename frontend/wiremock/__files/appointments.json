@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "client_id": 1,
+        "professional_id": 2,
+        "service_id": 1,
+        "start_at": "2025-11-07T10:00",
+        "end_at": "2025-11-07T11:00",
+        "status": "AGENDADO",
+        "observacoes": "Primeiro atendimento"
+    },
+    {
+        "id": 2,
+        "client_id": 2,
+        "professional_id": 2,
+        "service_id": 2,
+        "start_at": "2025-11-10T10:30",
+        "end_at": "2025-11-10T11:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    }, 
+    {
+        "id": 3,
+        "client_id": 3,
+        "professional_id": 2,
+        "service_id": 2,
+        "start_at": "2025-11-08T10:00",
+        "end_at": "2025-11-08T11:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    },
+    {
+        "id": 4,
+        "client_id": 4,
+        "professional_id": 2,
+        "service_id": 2,
+        "start_at": "2025-11-08T11:00",
+        "end_at": "2025-11-08T12:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    }
+]
