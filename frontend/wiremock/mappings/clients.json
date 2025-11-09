@@ -1,7 +1,7 @@
 {
     "request": {
         "method": "GET",
-        "url": "/api/clients"
+        "url": "/api/clientes"
     },
     "response": {
         "status": 200,
