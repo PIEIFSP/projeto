@@ -46,8 +46,8 @@ class AgendamentoController extends Controller {
     }
     public function buscarPorCliente($nome)
 {
-    // Busca o cliente pelo nome
-    $cliente = Cliente::where('Nome', 'like', "%{$nome}%")->first();
+    // Busca o cliente pelo id
+    $cliente = Cliente::find($id);
 
     if (!$cliente) {
         return response()->json(['message' => 'Cliente não encontrado.'], 404);
