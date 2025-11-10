@@ -44,10 +44,10 @@ class AgendamentoController extends Controller {
         ]);
         return response()->json($agendamento, 201);
     }
-    public function buscarPorCliente($nome)
+    public function buscarPorCliente($id)
 {
     // Busca o cliente pelo nome
-    $cliente = Cliente::where('Nome', 'like', "%{$nome}%")->first();
+    $cliente = Cliente::find($id);
 
     if (!$cliente) {
         return response()->json(['message' => 'Cliente não encontrado.'], 404);

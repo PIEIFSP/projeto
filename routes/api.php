@@ -15,7 +15,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{user}', [UserController::class, 'show']);
     Route::apiResource('clientes', ClienteController::class)->only(['index','store']);
-    Route::get('/agendamentos/cliente/{nome}', [AgendamentoController::class, 'buscarPorCliente']);
+    Route::get('/agendamentos/cliente/{id}', [AgendamentoController::class, 'buscarPorCliente']);
     Route::post('/agendamentos', [AgendamentoController::class, 'store']);
     Route::put('/agendamentos/{id}', [AgendamentoController::class, 'update']);
     Route::post('/agendamentos/{id}/concluir', [AgendamentoController::class, 'concluir']);
