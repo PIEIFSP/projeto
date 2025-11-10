@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ElementRef, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgendaApiService } from '../../services/agenda-api.service';
-import { Appointment } from '../../models/models';
+import { Agendamento, Cliente, Servico, Usuario, AppointmentStatus } from '../../models/models';
 import { CalendarOptions } from '@fullcalendar/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -24,11 +24,11 @@ export class AgendamentoComponent implements OnInit {
   @ViewChild('modalAgendamento') modalAgendamento!: ElementRef<HTMLDialogElement>;
   @ViewChild('modalVisualizar') modalVisualizar!: ElementRef<HTMLDialogElement>;
 
-  appointments: Appointment[] = [];
+  appointments: Agendamento[] = [];
 
-  clientList: { id: number; nome: string; telefone?: string }[] = [];
-  professionalList: { id: number; nome: string }[] = [];
-  serviceList: { id: number; nome: string }[] = [];
+  clientList: Cliente[] = [];
+  professionalList: Usuario[] = [];
+  serviceList: Servico[] = [];
 
   selectedAppointment: any = null;
 
@@ -36,15 +36,15 @@ export class AgendamentoComponent implements OnInit {
     clientNome: '',
     professionalNome: '',
     serviceNome: '',
-    start_at: '',
-    end_at: '',
-    status: 'AGENDADO',
+    data_hora_inicio: '',
+    data_hora_fim: '',
+    status: 'AGENDADO' as AppointmentStatus,
     observacoes: ''
   };
 
-  filteredClients: { id: number; nome: string; telefone?: string }[] = [];
-  filteredProfessionals: { id: number; nome: string }[] = [];
-  filteredServices: { id: number; nome: string }[] = [];
+  filteredClients: Cliente[] = [];
+  filteredProfessionals: Usuario[] = [];
+  filteredServices: Servico[] = [];
 
   showClientDropdown = false;
   showProfessionalDropdown = false;
@@ -55,7 +55,6 @@ export class AgendamentoComponent implements OnInit {
     initialView: 'dayGridMonth',
     selectable: true,
     locale: ptBr,
-    locales: [ptBr],
     firstDay: 1,
     headerToolbar: {
       left: 'prev,next today',
@@ -68,7 +67,7 @@ export class AgendamentoComponent implements OnInit {
       week: 'Semana',
       day: 'Dia'
     },
-    displayEventTime: false, // <- garante que o FullCalendar NÃO desenhe a hora automaticamente
+    displayEventTime: false,
     dateClick: (info) => this.abrirModalNovo(info.dateStr),
     eventClick: (info) => this.abrirModalVisualizar(info.event),
     events: []
@@ -78,7 +77,7 @@ export class AgendamentoComponent implements OnInit {
     this.loadAllOnce();
   }
 
-   // carrega appointments + listas em paralelo e atualiza o calendário apenas uma vez
+  // 🔹 Carrega todos os dados em paralelo
   loadAllOnce(): void {
     forkJoin({
       appointments: this.api.listar(),
@@ -92,17 +91,14 @@ export class AgendamentoComponent implements OnInit {
         this.professionalList = professionals;
         this.serviceList = services;
 
-        // Inicializa filtros do autocomplete
         this.filteredClients = this.clientList.slice();
         this.filteredProfessionals = this.professionalList.slice();
         this.filteredServices = this.serviceList.slice();
 
-        // Atualiza eventos do calendário uma única vez
         this.atualizarEventosCalendario();
       },
       error: (err) => {
         console.error('Erro ao carregar dados iniciais:', err);
-        // fallback: tenta carregar separadamente se necessário
         this.carregarListasReferencia();
         this.carregarAppointments();
       }
@@ -147,27 +143,26 @@ export class AgendamentoComponent implements OnInit {
 
   atualizarEventosCalendario(): void {
     this.calendarOptions.events = this.appointments.map(a => {
-      const client = this.clientList.find(c => c.id === a.client_id);
-      const service = this.serviceList.find(s => s.id === a.service_id);
+      const client = this.clientList.find(c => c.id_cliente === a.id_cliente);
+      const service = this.serviceList.find(s => s.id_servico === a.id_servico);
 
-      // formata hora como "10h30"
-      const startDate = new Date(a.start_at);
+      const startDate = new Date(a.data_hora_inicio);
       const hrs = startDate.getHours();
       const mins = String(startDate.getMinutes()).padStart(2, '0');
       const timeLabel = `${hrs}h${mins}`;
 
       return {
-        id: String(a.id),
+        id: String(a.id_agendamento),
         title: `${timeLabel} — ${client?.nome || 'Cliente'} - ${service?.nome || 'Serviço'}`,
-        start: a.start_at,
-        end: a.end_at,
+        start: a.data_hora_inicio,
+        end: a.data_hora_fim,
         extendedProps: a
       };
     });
   }
-  
+
   abrirModalNovo(date: string): void {
-    this.novoAppointmentForm.start_at = date;
+    this.novoAppointmentForm.data_hora_inicio = date;
     this.modalAgendamento.nativeElement.showModal();
   }
 
@@ -177,17 +172,18 @@ export class AgendamentoComponent implements OnInit {
 
   abrirModalVisualizar(event: any): void {
     const data = event.extendedProps;
-    const client = this.clientList.find(c => c.id === data.client_id);
-    const professional = this.professionalList.find(p => p.id === data.professional_id);
-    const service = this.serviceList.find(s => s.id === data.service_id);
+
+    const client = this.clientList.find(c => c.id_cliente === data.id_cliente);
+    const professional = this.professionalList.find(p => p.id_usuario === data.id_usuario);
+    const service = this.serviceList.find(s => s.id_servico === data.id_servico);
 
     this.selectedAppointment = {
-      id: data.id,
+      id_agendamento: data.id_agendamento,
       cliente: client?.nome || 'N/A',
       profissional: professional?.nome || 'N/A',
       servico: service?.nome || 'N/A',
-      inicio: new Date(data.start_at).toLocaleString('pt-BR'),
-      fim: new Date(data.end_at).toLocaleString('pt-BR'),
+      inicio: new Date(data.data_hora_inicio).toLocaleString('pt-BR'),
+      fim: new Date(data.data_hora_fim).toLocaleString('pt-BR'),
       status: data.status,
       observacoes: data.observacoes || 'Sem observações'
     };
@@ -201,9 +197,9 @@ export class AgendamentoComponent implements OnInit {
   }
 
   salvarAppointment(): void {
-    const clientNome = (this.novoAppointmentForm.clientNome || '').toLowerCase().trim();
-    const profNome = (this.novoAppointmentForm.professionalNome || '').toLowerCase().trim();
-    const servNome = (this.novoAppointmentForm.serviceNome || '').toLowerCase().trim();
+    const clientNome = this.novoAppointmentForm.clientNome.toLowerCase().trim();
+    const profNome = this.novoAppointmentForm.professionalNome.toLowerCase().trim();
+    const servNome = this.novoAppointmentForm.serviceNome.toLowerCase().trim();
 
     const client = this.clientList.find(c => c.nome.toLowerCase().trim() === clientNome);
     const professional = this.professionalList.find(p => p.nome.toLowerCase().trim() === profNome);
@@ -214,15 +210,15 @@ export class AgendamentoComponent implements OnInit {
       return;
     }
 
-    const start = new Date(this.novoAppointmentForm.start_at).toISOString();
-    const end = new Date(this.novoAppointmentForm.end_at).toISOString();
+    const start = new Date(this.novoAppointmentForm.data_hora_inicio).toISOString();
+    const end = new Date(this.novoAppointmentForm.data_hora_fim).toISOString();
 
     const payload = {
-      client_id: client.id,
-      professional_id: professional.id,
-      service_id: service.id,
-      start_at: start,
-      end_at: end,
+      id_cliente: client.id_cliente,
+      id_usuario: professional.id_usuario,
+      id_servico: service.id_servico,
+      data_hora_inicio: start,
+      data_hora_fim: end,
       status: this.novoAppointmentForm.status,
       observacoes: this.novoAppointmentForm.observacoes || undefined
     };
@@ -238,18 +234,15 @@ export class AgendamentoComponent implements OnInit {
     });
   }
 
-  // 🔴 NOVA FUNÇÃO: Cancelar agendamento
   cancelarAppointment(): void {
-    if (!this.selectedAppointment?.id) return;
+    const id = this.selectedAppointment?.id_agendamento;
+    if (!id) return;
 
-    const confirmacao = confirm('Tem certeza que deseja cancelar este agendamento?');
-    if (!confirmacao) return;
+    if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
 
-    this.api.cancelar(this.selectedAppointment.id).subscribe({
+    this.api.cancelar(id).subscribe({
       next: () => {
-        console.log(`Agendamento ${this.selectedAppointment.id} cancelado com sucesso.`);
-        // Atualiza localmente:
-        const index = this.appointments.findIndex(a => a.id === this.selectedAppointment.id);
+        const index = this.appointments.findIndex(a => a.id_agendamento === id);
         if (index !== -1) {
           this.appointments[index].status = 'CANCELADO';
         }
@@ -265,62 +258,77 @@ export class AgendamentoComponent implements OnInit {
       clientNome: '',
       professionalNome: '',
       serviceNome: '',
-      start_at: '',
-      end_at: '',
-      status: 'AGENDADO',
+      data_hora_inicio: '',
+      data_hora_fim: '',
+      status: 'AGENDADO' as AppointmentStatus,
       observacoes: ''
     };
   }
 
-  // AUTOCOMPLETE CLIENTES / PROFISSIONAIS / SERVIÇOS
-
+  // 🔹 AUTOCOMPLETE
   focusClients(): void {
     this.filteredClients = this.clientList.slice();
-    this.showClientDropdown = this.filteredClients.length > 0;
+    this.showClientDropdown = true;
   }
+
   filterClients(): void {
-    const q = (this.novoAppointmentForm.clientNome || '').toLowerCase().trim();
-    this.filteredClients = q ? this.clientList.filter(c => c.nome.toLowerCase().includes(q)) : this.clientList.slice();
-    this.showClientDropdown = this.filteredClients.length > 0;
+    const q = this.novoAppointmentForm.clientNome.toLowerCase().trim();
+    this.filteredClients = q
+      ? this.clientList.filter(c => c.nome.toLowerCase().includes(q))
+      : this.clientList.slice();
+    this.showClientDropdown = true;
   }
-  selectClient(c: { id: number; nome: string; telefone?: string }): void {
+
+  selectClient(c: Cliente): void {
     this.novoAppointmentForm.clientNome = c.nome;
     this.showClientDropdown = false;
   }
+
   hideClientDropdown(): void {
     setTimeout(() => (this.showClientDropdown = false), 150);
   }
 
   focusProfessionals(): void {
     this.filteredProfessionals = this.professionalList.slice();
-    this.showProfessionalDropdown = this.filteredProfessionals.length > 0;
+    this.showProfessionalDropdown = true;
   }
+
   filterProfessionals(): void {
-    const q = (this.novoAppointmentForm.professionalNome || '').toLowerCase().trim();
-    this.filteredProfessionals = q ? this.professionalList.filter(p => p.nome.toLowerCase().includes(q)) : this.professionalList.slice();
-    this.showProfessionalDropdown = this.filteredProfessionals.length > 0;
+    const q = this.novoAppointmentForm.professionalNome.toLowerCase().trim();
+    this.filteredProfessionals = q
+      ? this.professionalList.filter(p => p.nome.toLowerCase().includes(q))
+      : this.professionalList.slice();
+    this.showProfessionalDropdown = true;
   }
-  selectProfessional(p: { id: number; nome: string }): void {
+
+  selectProfessional(p: Usuario): void {
     this.novoAppointmentForm.professionalNome = p.nome;
     this.showProfessionalDropdown = false;
   }
+
   hideProfessionalDropdown(): void {
     setTimeout(() => (this.showProfessionalDropdown = false), 150);
   }
 
   focusServices(): void {
     this.filteredServices = this.serviceList.slice();
-    this.showServiceDropdown = this.filteredServices.length > 0;
+    this.showServiceDropdown = true;
   }
+
   filterServices(): void {
-    const q = (this.novoAppointmentForm.serviceNome || '').toLowerCase().trim();
-    this.filteredServices = q ? this.serviceList.filter(s => s.nome.toLowerCase().includes(q)) : this.serviceList.slice();
-    this.showServiceDropdown = this.filteredServices.length > 0;
+    const q = this.novoAppointmentForm.serviceNome.toLowerCase().trim();
+    this.filteredServices = q
+      ? this.serviceList.filter(s => s.nome.toLowerCase().includes(q))
+      : this.serviceList.slice();
+    this.showServiceDropdown = true;
   }
-  selectService(s: { id: number; nome: string }): void {
+
+  // 🔹 Corrigido: tipo da função selectService
+  selectService(s: Servico): void {
     this.novoAppointmentForm.serviceNome = s.nome;
     this.showServiceDropdown = false;
   }
+
   hideServiceDropdown(): void {
     setTimeout(() => (this.showServiceDropdown = false), 150);
   }
