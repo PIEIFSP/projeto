@@ -1,37 +1,36 @@
-export interface Professional {
-    id: number;
+export interface Usuario {
+    id_usuario: number;
     nome: string;
     cargo?: string;
     foto?: string;
 }
 
-export interface Client {
-    id: number;
+export interface Cliente {
+    id_cliente: number;
     nome: string;
     telefone?: string;
-    email?: string;
 }
 
-export interface Service {
-    id: number;
+export interface Servico {
+    id_servico: number;
     nome: string;
     valor?: number;
     duracao_minutos?: number;
-    professional_id?: number | null;
+    id_usuario?: number | null;
 }
 
 export type AppointmentStatus = 'AGENDADO' | 'CONFIRMADO' | 'CANCELADO';
 
-export interface Appointment {
-    id: number;
-    client_id: number;
-    professional_id: number;
-    service_id: number;
-    start_at: string; // ISO
-    end_at: string;   // ISO
+export interface Agendamento {
+    id_agendamento: number;
+    id_cliente: number;
+    id_usuario: number;
+    id_servico: number;
+    data_hora_inicio: string;
+    data_hora_fim: string;
     status: AppointmentStatus;
     observacoes?: string;
-    client?: Client;
-    professional?: Professional;
-    service?: Service;
+    cliente?: Cliente;
+    usuario?: Usuario; 
+    servico?: Servico; 
 }
