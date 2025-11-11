@@ -14,7 +14,25 @@ class AgendamentoController extends Controller {
         $query = Agendamento::with(['cliente', 'servico', 'usuario']);
         if ($request->has('usuario')) $query->where('ID_Usuario_FK', $request->usuario);
         if ($request->has('data')) $query->whereDate('Data_Hora_Inicio', $request->data);
-        return $query->get();
+
+        $agendamentos = $query->get();
+
+        $agendamentosMapeados = $agendamentos->map(function ($agendamento) {
+
+            return [
+                'id_agendamento' => $agendamento->ID_Agendamento,
+                'id_cliente' => $agendamento->ID_Cliente_FK,
+                'id_usuario' => $agendamento->ID_Usuario_FK,
+                'id_servico' => $agendamento->ID_Servico_FK,
+                'data_hora_inicio' => $agendamento->Data_Hora_Inicio,
+                'data_hora_fim' => $agendamento->Data_Hora_Fim,
+                'status' => $agendamento->Status,
+                'observacoes' => $agendamento->Observacao,
+            ];
+        });
+
+        // 4. Retorne o novo array mapeado como JSON
+        return response()->json($agendamentosMapeados);
     }
 
     public function store(Request $request) {
@@ -44,7 +62,7 @@ class AgendamentoController extends Controller {
         ]);
         return response()->json($agendamento, 201);
     }
-    public function buscarPorCliente($nome)
+    public function buscarPorCliente($id)
 {
     // Busca o cliente pelo id
     $cliente = Cliente::find($id);
