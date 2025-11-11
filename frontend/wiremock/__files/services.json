@@ -1,11 +1,11 @@
 [
     {
-        "id": 1,
+        "id_servico": 1,
         "nome": "Banho de gel",
         "duracao": 120
     },
     {
-        "id": 2,
+        "id_servico": 2,
         "nome": "Design de sobrancelha",
         "duracao": 60
     }

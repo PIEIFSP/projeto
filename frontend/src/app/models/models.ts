@@ -31,6 +31,6 @@ export interface Agendamento {
     status: AppointmentStatus;
     observacoes?: string;
     cliente?: Cliente;
-    usuario?: Usuario; 
-    servico?: Servico; 
+    usuario?: Usuario;
+    servico?: Servico;
 }
