@@ -7,7 +7,8 @@ import {
   Wallet,
   Calendar,
   Users,
-  Scissors
+  Scissors,
+  LogOut
 } from 'lucide-angular';
 
 import { provideHttpClient } from '@angular/common/http';
@@ -23,7 +24,8 @@ export const appConfig: ApplicationConfig = {
         Wallet,
         Calendar,
         Users,
-        Scissors
+        Scissors,
+        LogOut,
       })
     )
   ]

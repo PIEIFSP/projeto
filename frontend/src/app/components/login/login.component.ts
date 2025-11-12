@@ -74,7 +74,7 @@ export class LoginComponent implements OnInit {
         if (err.error && err.error.email) {
           this.loginError = err.error.email[0];
         } else {
-          this.loginError = 'Ocorreu um erro ao tentar fazer o login. Tente novamente.';
+          this.loginError = 'Credenciais inválidas. Tente novamente.';
         }
       }
     });
