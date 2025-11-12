@@ -35,33 +35,63 @@ class AgendamentoController extends Controller {
         return response()->json($agendamentosMapeados);
     }
 
-    public function store(Request $request) {
-        $data = $request->validate([
-            'ID_Usuario_FK'=>'required|exists:users,id',
-            'ID_Cliente_FK'=>'required|exists:clientes,ID_Cliente',
-            'ID_Servico_FK'=>'required|exists:servicos,ID_Servico',
-            'Data_Hora_Inicio'=>'required|date'
-        ]);
-        $servico = Servico::findOrFail($data['ID_Servico_FK']);
-        $inicio = new \DateTime($data['Data_Hora_Inicio']);
-        $fim = (clone $inicio)->modify("+{$servico->Duracao_Minutos} minutes");
+    public function store(Request $request)
+{
+    // Converte o formato do front para o do banco
+    $data = [
+        'ID_Usuario_FK'    => $request->input('id_usuario'),
+        'ID_Cliente_FK'    => $request->input('id_cliente'),
+        'ID_Servico_FK'    => $request->input('id_servico'),
+        'Data_Hora_Inicio' => $request->input('data_hora_inicio'),
+        'Data_Hora_Fim'    => $request->input('data_hora_fim'),
+        'Status'           => ucfirst(strtolower($request->input('status', 'Confirmado'))),
+    ];
 
-        // Verifica disponibilidade
-        $conflito = Agendamento::where('ID_Usuario_FK', $data['ID_Usuario_FK'])
-            ->where(function($q) use ($inicio, $fim) {
-                $q->whereBetween('Data_Hora_Inicio', [$inicio, $fim])
-                  ->orWhereBetween('Data_Hora_Fim', [$inicio, $fim]);
-            })->exists();
+    //  Validação
+    $validated = validator($data, [
+        'ID_Usuario_FK'    => 'required|exists:users,id',
+        'ID_Cliente_FK'    => 'required|exists:clientes,ID_Cliente',
+        'ID_Servico_FK'    => 'required|exists:servicos,ID_Servico',
+        'Data_Hora_Inicio' => 'required|date',
+        'Data_Hora_Fim'    => 'required|date|after:Data_Hora_Inicio',
+        'Status'           => 'required|in:Confirmado,Cancelado,Remarcado',
+    ])->validate();
 
-        if ($conflito) return response()->json(['error'=>'Horário indisponível'], 409);
+    // Converte datas ISO (2025-11-11T00:54:00.000Z → 2025-11-11 00:54:00)
+    $validated['Data_Hora_Inicio'] = date('Y-m-d H:i:s', strtotime($validated['Data_Hora_Inicio']));
+    $validated['Data_Hora_Fim']    = date('Y-m-d H:i:s', strtotime($validated['Data_Hora_Fim']));
 
-        $agendamento = Agendamento::create([
-            ...$data,
-            'Data_Hora_Fim'=>$fim,
-            'Valor_Pago_Ajustado'=>$servico->Valor
-        ]);
-        return response()->json($agendamento, 201);
+    // Verifica conflito de horário
+    $conflito = Agendamento::where('ID_Usuario_FK', $validated['ID_Usuario_FK'])
+        ->where(function ($q) use ($validated) {
+            $q->whereBetween('Data_Hora_Inicio', [$validated['Data_Hora_Inicio'], $validated['Data_Hora_Fim']])
+              ->orWhereBetween('Data_Hora_Fim', [$validated['Data_Hora_Inicio'], $validated['Data_Hora_Fim']]);
+        })
+        ->exists();
+
+    if ($conflito) {
+        return response()->json(['error' => 'Horário indisponível'], 409);
     }
+
+    //  Cria o agendamento
+    $agendamento = Agendamento::create($validated);
+
+    return response()->json([
+        'message' => 'Agendamento criado com sucesso!',
+        'data' => [
+            'id_agendamento'   => $agendamento->ID_Agendamento,
+            'id_cliente'       => $agendamento->ID_Cliente_FK,
+            'id_usuario'       => $agendamento->ID_Usuario_FK,
+            'id_servico'       => $agendamento->ID_Servico_FK,
+            'data_hora_inicio' => $agendamento->Data_Hora_Inicio,
+            'data_hora_fim'    => $agendamento->Data_Hora_Fim,
+            'status'           => $agendamento->Status,
+            'observacoes'      => $agendamento->Observacao,
+        ]
+    ], 201);
+}
+
+
     public function buscarPorCliente($id)
 {
     // Busca o cliente pelo id
