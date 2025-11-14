@@ -1,0 +1,44 @@
+<!-- BARRA LATERAL -->
+<div class="container">
+    <aside [class.open]="sidebarOpen">
+        <div class="topo-sidebar">
+            <div class="logo-container" *ngIf="sidebarOpen">
+                <img src="imagens/login/logo.png" alt="Logo do Studio" class="logo">
+            </div>
+
+            <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+        </div>
+
+        <nav color>
+            <a routerLink="/home" routerLinkActive="active">
+                <lucide-icon name="house" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Home</span>
+            </a>
+
+            <a routerLink="/financeiro" routerLinkActive="active">
+                <lucide-icon name="wallet" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Financeiro</span>
+            </a>
+
+            <a routerLink="/agenda" routerLinkActive="active">
+                <lucide-icon name="calendar" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Agenda</span>
+            </a>
+
+            <a routerLink="/clientes" routerLinkActive="active">
+                <lucide-icon name="users" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Clientes</span>
+            </a>
+
+            <a routerLink="/usuario" routerLinkActive="active">
+                <lucide-icon name="scissors" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Usuários</span>
+            </a>
+
+            <a routerLink="/login" routerLinkActive="active">
+                <lucide-icon name="log-out" class="icon"></lucide-icon>
+                <span *ngIf="sidebarOpen">Sair</span>
+            </a>
+        </nav>
+    </aside>
+</div>

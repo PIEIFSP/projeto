@@ -1,0 +1,42 @@
+[
+    {
+        "id_agendamento": 1,
+        "id_cliente": 1,
+        "id_usuario": 2,
+        "id_servico": 1,
+        "data_hora_inicio": "2025-11-07T10:00",
+        "data_hora_fim": "2025-11-07T11:00",
+        "status": "AGENDADO",
+        "observacoes": "Primeiro atendimento"
+    },
+    {
+        "id_agendamento": 2,
+        "id_cliente": 2,
+        "id_usuario": 2,
+        "id_servico": 2,
+        "data_hora_inicio": "2025-11-10T10:30",
+        "data_hora_fim": "2025-11-10T11:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    },
+    {
+        "id_agendamento": 3,
+        "id_cliente": 3,
+        "id_usuario": 2,
+        "id_servico": 2,
+        "data_hora_inicio": "2025-11-08T10:00",
+        "data_hora_fim": "2025-11-08T11:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    },
+    {
+        "id_agendamento": 4,
+        "id_cliente": 4,
+        "id_usuario": 2,
+        "id_servico": 2,
+        "data_hora_inicio": "2025-11-08T11:00",
+        "data_hora_fim": "2025-11-08T12:00",
+        "status": "AGENDADO",
+        "observacoes": "teste"
+    }
+]

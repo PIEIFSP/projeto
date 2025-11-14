@@ -1,0 +1,6 @@
+{
+    "port": 8080,
+    "rootDir": "./wiremock",
+    "verbose": true,
+    "globalResponseDelay": 300
+}
