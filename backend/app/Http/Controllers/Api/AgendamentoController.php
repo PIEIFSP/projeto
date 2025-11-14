@@ -112,20 +112,58 @@ class AgendamentoController extends Controller {
 
     return response()->json($agendamentos);
 }
+public function cancelar($id)
+    {
+        $agendamento = Agendamento::find($id);
+
+        if (!$agendamento) {
+            return response()->json(['message' => 'Agendamento não encontrado.'], 404);
+        }
+
+        if ($agendamento->Status === 'Cancelado') {
+            return response()->json(['message' => 'Este agendamento já está cancelado.'], 400);
+        }
+
+        $agendamento->update(['Status' => 'Cancelado']);
+
+        return response()->json([
+            'message' => 'Agendamento cancelado com sucesso!',
+            'data' => $agendamento
+        ]);
+    }
+
 
    public function update(Request $request, $id)
 {
-    $validated = $request->validate([
+    // Converte os campos do front para os campos do banco
+    $data = [
+        'ID_Usuario_FK'    => $request->input('id_usuario'),
+        'ID_Cliente_FK'    => $request->input('id_cliente'),
+        'ID_Servico_FK'    => $request->input('id_servico'),
+        'Data_Hora_Inicio' => $request->input('data_hora_inicio'),
+        'Data_Hora_Fim'    => $request->input('data_hora_fim'),
+        'Status'           => $request->input('status'),
+        'Observacao'       => $request->input('observacoes'),
+        'Valor_Pago_Ajustado' => $request->input('valor_pago_ajustado'),
+    ];
+
+    // Valida os campos já convertidos
+    $validated = validator($data, [
         'ID_Usuario_FK' => 'required|exists:users,id',
         'ID_Cliente_FK' => 'required|exists:clientes,ID_Cliente',
         'ID_Servico_FK' => 'required|exists:servicos,ID_Servico',
-        'Valor_Pago_Ajustado' => 'nullable|numeric',
         'Data_Hora_Inicio' => 'required|date',
         'Data_Hora_Fim' => 'required|date|after:Data_Hora_Inicio',
         'Status' => 'required|string',
         'Observacao' => 'nullable|string',
-    ]);
+        'Valor_Pago_Ajustado' => 'nullable|numeric',
+    ])->validate();
 
+    // Ajuste de datas
+    $validated['Data_Hora_Inicio'] = date('Y-m-d H:i:s', strtotime($validated['Data_Hora_Inicio']));
+    $validated['Data_Hora_Fim']    = date('Y-m-d H:i:s', strtotime($validated['Data_Hora_Fim']));
+
+    // Atualização
     $agendamento = Agendamento::findOrFail($id);
     $agendamento->update($validated);
 
@@ -136,8 +174,15 @@ class AgendamentoController extends Controller {
 }
 
 
+
     public function concluir($id) {
         $agendamento = Agendamento::findOrFail($id);
+
+         if ($agendamento->Status === 'Cancelado') {
+            return response()->json([
+                'message' => 'Não é possível concluir um agendamento cancelado.'
+            ], 400);
+        }
         $agendamento->update(['Status'=>'Confirmado','Data_Registro_Pagamento'=>now()]);
         TransacaoFinanceira::create([
             'ID_Agendamento_FK'=>$agendamento->ID_Agendamento,
