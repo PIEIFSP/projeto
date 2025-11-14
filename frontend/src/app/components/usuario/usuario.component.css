@@ -11,18 +11,8 @@
 
  main.content-area {
    flex-grow: 1;
-   padding: 92px 100px;
+     padding: 92px 100px;
    margin: 0;
    box-sizing: border-box;
    overflow-x: hidden;
-   display: flex;
-   justify-content: center;
-   align-items: center
  }
-
-
-.develop {
-  max-width: 500px;
-  width: 100%;
-  height: auto;
-}

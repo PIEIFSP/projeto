@@ -9,7 +9,7 @@
 aside {
     width: 70px;
     height: 100%;
-    background-color:#5c6bc0;
+    background-color: #3f51b5;
     color: white;
     transition: width 0.3s ease;
     overflow-x: hidden;

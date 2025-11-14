@@ -1,8 +1,10 @@
+export type NivelAcesso = 'ADMIN' | 'PADRAO';
 export interface Usuario {
     id_usuario: number;
     nome: string;
-    cargo?: string;
-    foto?: string;
+    telefone:string;
+    email: string;
+    perfil: NivelAcesso;
 }
 
 export interface Cliente {
@@ -18,6 +20,7 @@ export interface Servico {
     duracao_minutos?: number;
     id_usuario?: number | null;
 }
+
 
 export type AppointmentStatus = 'AGENDADO' | 'CONFIRMADO' | 'CANCELADO';
 

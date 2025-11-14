@@ -9,7 +9,7 @@
             <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
         </div>
 
-        <nav>
+        <nav color>
             <a routerLink="/home" routerLinkActive="active">
                 <lucide-icon name="house" class="icon"></lucide-icon>
                 <span *ngIf="sidebarOpen">Home</span>
@@ -30,9 +30,9 @@
                 <span *ngIf="sidebarOpen">Clientes</span>
             </a>
 
-            <a routerLink="/profissionais" routerLinkActive="active">
+            <a routerLink="/usuario" routerLinkActive="active">
                 <lucide-icon name="scissors" class="icon"></lucide-icon>
-                <span *ngIf="sidebarOpen">Profissionais</span>
+                <span *ngIf="sidebarOpen">Usuários</span>
             </a>
 
             <a routerLink="/login" routerLinkActive="active">

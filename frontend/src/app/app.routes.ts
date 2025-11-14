@@ -6,6 +6,6 @@ export const routes: Routes = [
     { path: 'agenda', loadComponent: () => import('./components/agendamento/agendamento.component').then(c => c.AgendamentoComponent) },
     { path: 'financeiro', loadComponent: () => import('./components/financeiro/financeiro.component').then(c => c.FinanceiroComponent) },
     { path: 'clientes', loadComponent: () => import('./components/clientes/clientes.component').then(c => c.ClientesComponent) },
-    { path: 'profissionais', loadComponent: () => import('./components/profissionais/profissionais.component').then(c => c.ProfissionaisComponent) },
+    { path: 'usuario', loadComponent: () => import('./components/usuario/usuario.component').then(c => c.UsuarioComponent) },
     { path: '**', redirectTo: '' }
 ];
