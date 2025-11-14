@@ -31,11 +31,15 @@ export class AgendamentoComponent implements OnInit {
   serviceList: Servico[] = [];
 
   selectedAppointment: any = null;
+  selectedAppointmentRaw: Agendamento | null = null;
 
   novoAppointmentForm = {
-    clientNome: '',
-    professionalNome: '',
-    serviceNome: '',
+    id_cliente: null as number | null,
+    clienteNome: '',
+    id_usuario: null as number | null,
+    usuarioNome: '',
+    id_servico: null as number | null,
+    servicoNome: '',
     data_hora_inicio: '',
     data_hora_fim: '',
     status: 'AGENDADO' as AppointmentStatus,
@@ -172,6 +176,8 @@ export class AgendamentoComponent implements OnInit {
 
   abrirModalVisualizar(event: any): void {
     const data = event.extendedProps;
+    // guarda o objeto bruto para operações (cancelar, reagendar)
+    this.selectedAppointmentRaw = data as Agendamento;
 
     const client = this.clientList.find(c => c.id_cliente === data.id_cliente);
     const professional = this.professionalList.find(p => p.id_usuario === data.id_usuario);
@@ -194,16 +200,46 @@ export class AgendamentoComponent implements OnInit {
   fecharModalVisualizar(): void {
     this.modalVisualizar.nativeElement.close();
     this.selectedAppointment = null;
+    this.selectedAppointmentRaw = null;
   }
 
-  salvarAppointment(): void {
-    const clientNome = this.novoAppointmentForm.clientNome.toLowerCase().trim();
-    const profNome = this.novoAppointmentForm.professionalNome.toLowerCase().trim();
-    const servNome = this.novoAppointmentForm.serviceNome.toLowerCase().trim();
+  reagendarAppointment(): void {
+    if (!this.selectedAppointmentRaw) return;
 
-    const client = this.clientList.find(c => c.nome.toLowerCase().trim() === clientNome);
-    const professional = this.professionalList.find(p => p.nome.toLowerCase().trim() === profNome);
-    const service = this.serviceList.find(s => s.nome.toLowerCase().trim() === servNome);
+    const raw = this.selectedAppointmentRaw;
+
+    // preenche o form com dados do agendamento selecionado
+    this.novoAppointmentForm = {
+      id_cliente: raw.id_cliente,
+      clienteNome: this.clientList.find(c => c.id_cliente === raw.id_cliente)?.nome || '',
+      id_usuario: raw.id_usuario,
+      usuarioNome: this.professionalList.find(p => p.id_usuario === raw.id_usuario)?.nome || '',
+      id_servico: raw.id_servico,
+      servicoNome: this.serviceList.find(s => s.id_servico === raw.id_servico)?.nome || '',
+      data_hora_inicio: raw.data_hora_inicio,
+      data_hora_fim: raw.data_hora_fim,
+      status: raw.status,
+      observacoes: raw.observacoes || ''
+    };
+
+    // fecha o modal de visualização e abre o de edição
+    this.fecharModalVisualizar();
+    this.modalAgendamento.nativeElement.showModal();
+  }
+
+
+  salvarAppointment(): void {
+    // se há agendamento selecionado, está editando (reagendando)
+    const isEdicao = !!this.selectedAppointmentRaw;
+    const agendamentoId = this.selectedAppointmentRaw?.id_agendamento;    
+
+
+    const client = this.clientList.find(c => c.id_cliente === this.novoAppointmentForm.id_cliente)
+      ?? this.clientList.find(c => c.nome.toLowerCase().trim() === (this.novoAppointmentForm.clienteNome || '').toLowerCase().trim());
+    const professional = this.professionalList.find(p => p.id_usuario === this.novoAppointmentForm.id_usuario)
+      ?? this.professionalList.find(p => p.nome.toLowerCase().trim() === (this.novoAppointmentForm.usuarioNome || '').toLowerCase().trim());
+    const service = this.serviceList.find(s => s.id_servico === this.novoAppointmentForm.id_servico)
+      ?? this.serviceList.find(s => s.nome.toLowerCase().trim() === (this.novoAppointmentForm.servicoNome || '').toLowerCase().trim());
 
     if (!client || !professional || !service) {
       console.error('Cliente, profissional ou serviço não encontrado.');
@@ -223,29 +259,49 @@ export class AgendamentoComponent implements OnInit {
       observacoes: this.novoAppointmentForm.observacoes || undefined
     };
 
-    this.api.criar(payload).subscribe({
-      next: (novoAppointment) => {
-        this.appointments.push(novoAppointment);
-        this.atualizarEventosCalendario();
-        this.fecharModal();
-        this.resetForm();
-      },
-      error: (err) => console.error('Erro ao salvar:', err)
-    });
+    if (isEdicao && agendamentoId) {
+      // atualizar agendamento existente
+      this.api.atualizar(agendamentoId, payload).subscribe({
+        next: (updated) => {
+          // encontra e substitui na lista local
+          const index = this.appointments.findIndex(a => a.id_agendamento === agendamentoId);
+          if (index !== -1) {
+            this.appointments[index] = updated;
+          }
+          this.atualizarEventosCalendario();
+          this.fecharModal();
+          this.resetForm();
+        },
+        error: (err) => console.error('Erro ao atualizar agendamento:', err)
+      });
+    } else {
+     // criar novo agendamento
+      this.api.criar(payload).subscribe({
+        next: (novoAppointment) => {
+          this.appointments.push(novoAppointment);
+          this.atualizarEventosCalendario();
+          this.fecharModal();
+          this.resetForm();
+        },
+        error: (err) => console.error('Erro ao salvar:', err)
+      });
+    }
   }
 
   cancelarAppointment(): void {
-    const id = this.selectedAppointment?.id_agendamento;
+    // tenta obter id de possíveis formatos (objeto bruto ou formatado)
+    const id = (this as any).selectedAppointmentRaw?.id_agendamento
+      ?? this.selectedAppointment?.id_agendamento
+      ?? this.selectedAppointment?.id;
     if (!id) return;
 
-    if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
+    const confirmacao = confirm('Tem certeza que deseja cancelar este agendamento?');
+    if (!confirmacao) return;
 
     this.api.cancelar(id).subscribe({
       next: () => {
-        const index = this.appointments.findIndex(a => a.id_agendamento === id);
-        if (index !== -1) {
-          this.appointments[index].status = 'CANCELADO';
-        }
+        // remove do array local para sumir do calendário
+        this.appointments = this.appointments.filter(a => a.id_agendamento !== id);
         this.atualizarEventosCalendario();
         this.fecharModalVisualizar();
       },
@@ -255,14 +311,18 @@ export class AgendamentoComponent implements OnInit {
 
   resetForm(): void {
     this.novoAppointmentForm = {
-      clientNome: '',
-      professionalNome: '',
-      serviceNome: '',
+      id_cliente: null,
+      clienteNome: '',
+      id_usuario: null,
+      usuarioNome: '',
+      id_servico: null,
+      servicoNome: '',
       data_hora_inicio: '',
       data_hora_fim: '',
       status: 'AGENDADO' as AppointmentStatus,
       observacoes: ''
     };
+    this.selectedAppointmentRaw = null;
   }
 
   // 🔹 AUTOCOMPLETE
@@ -272,7 +332,7 @@ export class AgendamentoComponent implements OnInit {
   }
 
   filterClients(): void {
-    const q = this.novoAppointmentForm.clientNome.toLowerCase().trim();
+    const q = this.novoAppointmentForm.clienteNome.toLowerCase().trim();
     this.filteredClients = q
       ? this.clientList.filter(c => c.nome.toLowerCase().includes(q))
       : this.clientList.slice();
@@ -280,7 +340,7 @@ export class AgendamentoComponent implements OnInit {
   }
 
   selectClient(c: Cliente): void {
-    this.novoAppointmentForm.clientNome = c.nome;
+    this.novoAppointmentForm.clienteNome = c.nome;
     this.showClientDropdown = false;
   }
 
@@ -294,7 +354,7 @@ export class AgendamentoComponent implements OnInit {
   }
 
   filterProfessionals(): void {
-    const q = this.novoAppointmentForm.professionalNome.toLowerCase().trim();
+    const q = this.novoAppointmentForm.usuarioNome.toLowerCase().trim();
     this.filteredProfessionals = q
       ? this.professionalList.filter(p => p.nome.toLowerCase().includes(q))
       : this.professionalList.slice();
@@ -302,7 +362,7 @@ export class AgendamentoComponent implements OnInit {
   }
 
   selectProfessional(p: Usuario): void {
-    this.novoAppointmentForm.professionalNome = p.nome;
+    this.novoAppointmentForm.usuarioNome = p.nome;
     this.showProfessionalDropdown = false;
   }
 
@@ -316,16 +376,15 @@ export class AgendamentoComponent implements OnInit {
   }
 
   filterServices(): void {
-    const q = this.novoAppointmentForm.serviceNome.toLowerCase().trim();
+    const q = this.novoAppointmentForm.servicoNome.toLowerCase().trim();
     this.filteredServices = q
       ? this.serviceList.filter(s => s.nome.toLowerCase().includes(q))
       : this.serviceList.slice();
     this.showServiceDropdown = true;
   }
 
-  // 🔹 Corrigido: tipo da função selectService
   selectService(s: Servico): void {
-    this.novoAppointmentForm.serviceNome = s.nome;
+    this.novoAppointmentForm.servicoNome = s.nome;
     this.showServiceDropdown = false;
   }
 

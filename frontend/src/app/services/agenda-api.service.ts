@@ -14,6 +14,7 @@ export class AgendaApiService {
     // Cria headers com token de autenticação
     private getAuthHeaders(): HttpHeaders {
         const token = localStorage.getItem('token');
+        if (!token) return new HttpHeaders();
         return new HttpHeaders({
             Authorization: `Bearer ${token}`
         });
@@ -47,13 +48,10 @@ export class AgendaApiService {
         });
     }
 
-    // Cancelar agendamento (caso o backend apenas mude status)
+ // Cancelar agendamento 
     cancelar(id: number): Observable<void> {
-        //  Caso o backend delete, mantenha DELETE
-        // return this.http.delete<void>(`${this.baseUrl}/agendamentos/${id}`, { headers: this.getAuthHeaders() });
-
-        //  Caso o backend apenas atualize o status:
-        return this.http.patch<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
+       // backend espera POST para cancelar
+        return this.http.post<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
             headers: this.getAuthHeaders()
         });
     }

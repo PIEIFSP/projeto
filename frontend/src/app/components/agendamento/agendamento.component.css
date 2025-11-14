@@ -82,17 +82,27 @@ dialog::backdrop {
 }
 
 .modal-visualizar {
-    border: none;
-    border-radius: 10px;
-    padding: 20px;
-    width: 350px;
-    max-width: 90%;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  border-radius: 8px;
+  padding: 20px;
 }
 
-.modal-visualizar::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+.btn-close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px 10px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  color: #000;
 }
 
 form {
@@ -101,7 +111,6 @@ form {
     gap: 10px;
 }
 
-/* ====== INPUTS (novo design) ====== */
 input,
 select,
 textarea {
