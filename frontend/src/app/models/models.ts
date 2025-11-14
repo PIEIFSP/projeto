@@ -19,7 +19,7 @@ export interface Servico {
     id_usuario?: number | null;
 }
 
-export type AppointmentStatus = 'AGENDADO' | 'CONFIRMADO' | 'CANCELADO';
+export type AppointmentStatus = 'REAGENDADO' | 'CONFIRMADO' | 'CANCELADO' | 'CONCLUIDO';
 
 export interface Agendamento {
     id_agendamento: number;

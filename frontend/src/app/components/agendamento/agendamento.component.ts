@@ -42,7 +42,7 @@ export class AgendamentoComponent implements OnInit {
     servicoNome: '',
     data_hora_inicio: '',
     data_hora_fim: '',
-    status: 'AGENDADO' as AppointmentStatus,
+    status: 'CONFIRMADO' as AppointmentStatus,
     observacoes: ''
   };
 
@@ -166,6 +166,8 @@ export class AgendamentoComponent implements OnInit {
   }
 
   abrirModalNovo(date: string): void {
+    // garantir que não estamos em modo edição
+    this.resetForm();
     this.novoAppointmentForm.data_hora_inicio = date;
     this.modalAgendamento.nativeElement.showModal();
   }
@@ -200,7 +202,6 @@ export class AgendamentoComponent implements OnInit {
   fecharModalVisualizar(): void {
     this.modalVisualizar.nativeElement.close();
     this.selectedAppointment = null;
-    this.selectedAppointmentRaw = null;
   }
 
   reagendarAppointment(): void {
@@ -227,6 +228,40 @@ export class AgendamentoComponent implements OnInit {
     this.modalAgendamento.nativeElement.showModal();
   }
 
+toggleConcluido(checked: boolean): void {
+    const id = this.selectedAppointmentRaw?.id_agendamento
+      ?? this.selectedAppointment?.id_agendamento
+      ?? this.selectedAppointment?.id;
+    if (!id) return;
+
+    const novoStatus: AppointmentStatus = checked ? 'CONCLUIDO' : 'CONFIRMADO';
+
+    // envia atualização parcial apenas com o status
+    this.api.atualizar(id, { status: novoStatus }).subscribe({
+      next: (updated) => {
+        // atualiza lista local e UI
+        const index = this.appointments.findIndex(a => a.id_agendamento === id);
+        if (index !== -1) {
+          this.appointments[index].status = updated.status;
+        }
+        if (this.selectedAppointment) {
+          this.selectedAppointment.status = updated.status;
+        }
+        if (this.selectedAppointmentRaw) {
+          this.selectedAppointmentRaw.status = updated.status;
+        }
+        this.atualizarEventosCalendario();
+      },
+        error: (err) => {
+        console.error('Erro ao atualizar status do agendamento:', err);
+        // revert UI checkbox se falhar
+        if (this.selectedAppointment) {
+          // força re-render do estado anterior
+          this.selectedAppointment.status = this.appointments.find(a => a.id_agendamento === id)?.status ?? this.selectedAppointment.status;
+        }
+      }
+    });
+  }
 
   salvarAppointment(): void {
     // se há agendamento selecionado, está editando (reagendando)
@@ -304,6 +339,8 @@ export class AgendamentoComponent implements OnInit {
         this.appointments = this.appointments.filter(a => a.id_agendamento !== id);
         this.atualizarEventosCalendario();
         this.fecharModalVisualizar();
+        // limpar o modo de edição explicitamente após fechar
+        this.selectedAppointmentRaw = null;
       },
       error: (err) => console.error('Erro ao cancelar agendamento:', err)
     });
@@ -319,7 +356,7 @@ export class AgendamentoComponent implements OnInit {
       servicoNome: '',
       data_hora_inicio: '',
       data_hora_fim: '',
-      status: 'AGENDADO' as AppointmentStatus,
+      status: 'CONFIRMADO' as AppointmentStatus,
       observacoes: ''
     };
     this.selectedAppointmentRaw = null;
