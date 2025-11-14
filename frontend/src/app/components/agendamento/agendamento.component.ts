@@ -228,46 +228,12 @@ export class AgendamentoComponent implements OnInit {
     this.modalAgendamento.nativeElement.showModal();
   }
 
-toggleConcluido(checked: boolean): void {
-    const id = this.selectedAppointmentRaw?.id_agendamento
-      ?? this.selectedAppointment?.id_agendamento
-      ?? this.selectedAppointment?.id;
-    if (!id) return;
-
-    const novoStatus: AppointmentStatus = checked ? 'CONCLUIDO' : 'CONFIRMADO';
-
-    // envia atualização parcial apenas com o status
-    this.api.atualizar(id, { status: novoStatus }).subscribe({
-      next: (updated) => {
-        // atualiza lista local e UI
-        const index = this.appointments.findIndex(a => a.id_agendamento === id);
-        if (index !== -1) {
-          this.appointments[index].status = updated.status;
-        }
-        if (this.selectedAppointment) {
-          this.selectedAppointment.status = updated.status;
-        }
-        if (this.selectedAppointmentRaw) {
-          this.selectedAppointmentRaw.status = updated.status;
-        }
-        this.atualizarEventosCalendario();
-      },
-        error: (err) => {
-        console.error('Erro ao atualizar status do agendamento:', err);
-        // revert UI checkbox se falhar
-        if (this.selectedAppointment) {
-          // força re-render do estado anterior
-          this.selectedAppointment.status = this.appointments.find(a => a.id_agendamento === id)?.status ?? this.selectedAppointment.status;
-        }
-      }
-    });
-  }
-
   salvarAppointment(): void {
     // se há agendamento selecionado, está editando (reagendando)
     const isEdicao = !!this.selectedAppointmentRaw;
-    const agendamentoId = this.selectedAppointmentRaw?.id_agendamento;    
+    const agendamentoId = this.selectedAppointmentRaw?.id_agendamento;  
 
+    console.log('Salvando agendamento. Edição:', isEdicao, 'ID:', agendamentoId);
 
     const client = this.clientList.find(c => c.id_cliente === this.novoAppointmentForm.id_cliente)
       ?? this.clientList.find(c => c.nome.toLowerCase().trim() === (this.novoAppointmentForm.clienteNome || '').toLowerCase().trim());
@@ -294,7 +260,9 @@ toggleConcluido(checked: boolean): void {
       observacoes: this.novoAppointmentForm.observacoes || undefined
     };
 
+    // ... (código para encontrar cliente, profissional e serviço)
     if (isEdicao && agendamentoId) {
+      console.log('Atualizando agendamento:', payload);
       // atualizar agendamento existente
       this.api.atualizar(agendamentoId, payload).subscribe({
         next: (updated) => {
@@ -311,6 +279,7 @@ toggleConcluido(checked: boolean): void {
       });
     } else {
      // criar novo agendamento
+      console.log('Criando novo agendamento:', payload);
       this.api.criar(payload).subscribe({
         next: (novoAppointment) => {
           this.appointments.push(novoAppointment);
@@ -328,6 +297,9 @@ toggleConcluido(checked: boolean): void {
     const id = (this as any).selectedAppointmentRaw?.id_agendamento
       ?? this.selectedAppointment?.id_agendamento
       ?? this.selectedAppointment?.id;
+
+      console.log('Cancelando agendamento com ID:', id);
+
     if (!id) return;
 
     const confirmacao = confirm('Tem certeza que deseja cancelar este agendamento?');
@@ -335,6 +307,7 @@ toggleConcluido(checked: boolean): void {
 
     this.api.cancelar(id).subscribe({
       next: () => {
+        console.log('Agendamento cancelado com sucesso. ID:', id);
         // remove do array local para sumir do calendário
         this.appointments = this.appointments.filter(a => a.id_agendamento !== id);
         this.atualizarEventosCalendario();

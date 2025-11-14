@@ -87,14 +87,6 @@
                 <p><strong>Observações:</strong> {{ selectedAppointment.observacoes }}</p>
             </div>
 
-            <div class="appointment-complete">
-                <label>
-                    <input #concluidoCheckbox type="checkbox" 
-                        [checked]="selectedAppointment?.status === 'CONCLUIDO'"
-                        (change)="toggleConcluido(concluidoCheckbox.checked)" />
-                    Concluído
-                </label>
-            </div>
 
             <button (click)="reagendarAppointment()" class="btn btn-primary">
                 Reagendar

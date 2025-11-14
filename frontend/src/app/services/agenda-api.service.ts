@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Agendamento, Cliente, Usuario, Servico } from '../models/models';
 import { environment } from '../../environments/environment'; // import do environment
 
@@ -36,10 +36,19 @@ export class AgendaApiService {
 
     //  Atualizar agendamento existente
     atualizar(id: number, agendamento: Partial<Agendamento>): Observable<Agendamento> {
-        return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
-            headers: this.getAuthHeaders()
-        });
-    }
+    console.log('Atualizando agendamento. ID:', id, 'Dados:', agendamento);
+    return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
+        headers: this.getAuthHeaders()
+    }).pipe(
+        tap(response => {
+            console.log('Resposta da atualização:', response);
+        }),
+        catchError(err => {
+            console.error('Erro na atualização do agendamento:', err);
+            return throwError(err);
+        })
+    );
+}
 
     // Excluir agendamento (remove definitivamente)
     excluir(id: number): Observable<void> {
