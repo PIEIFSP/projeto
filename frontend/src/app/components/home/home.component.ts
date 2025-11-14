@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { BarraLateralComponent } from '../shared/barra-lateral/barra-lateral.component';
+// import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [ CommonModule, BarraLateralComponent ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  sidebarOpen = false;
+  // sidebarOpen = false;
 
   // Dados fictícios do dashboard
   dadosSemana = { procedimentos: 18 };
@@ -22,7 +23,7 @@ export class HomeComponent {
     { horario: '14:00', cliente: 'Camila Torres', servico: 'Alongamento de cílios' }
   ];
 
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
+  // toggleSidebar() {
+  //   this.sidebarOpen = !this.sidebarOpen;
+  // }
 }

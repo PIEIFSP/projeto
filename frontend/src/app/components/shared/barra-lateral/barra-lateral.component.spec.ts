@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AgendaComponent } from './agenda.component';
+import { BarraLateralComponent } from './barra-lateral.component';
 
-describe('AgendaComponent', () => {
-  let component: AgendaComponent;
-  let fixture: ComponentFixture<AgendaComponent>;
+describe('BarraLateralComponent', () => {
+  let component: BarraLateralComponent;
+  let fixture: ComponentFixture<BarraLateralComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AgendaComponent]
+      imports: [BarraLateralComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AgendaComponent);
+    fixture = TestBed.createComponent(BarraLateralComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
