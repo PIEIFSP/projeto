@@ -247,8 +247,12 @@ export class AgendamentoComponent implements OnInit {
       return;
     }
 
-    const start = new Date(this.novoAppointmentForm.data_hora_inicio).toISOString();
-    const end = new Date(this.novoAppointmentForm.data_hora_fim).toISOString();
+    // converter para ISO mantendo o horário local (sem shift de fuso)
+    const start = this.toISOLocal(this.novoAppointmentForm.data_hora_inicio);
+    const end = this.toISOLocal(this.novoAppointmentForm.data_hora_fim);
+
+    console.log('Data/hora início (ISO Local):', start);
+    console.log('Data/hora fim (ISO Local):', end);
 
     const payload = {
       id_cliente: client.id_cliente,
@@ -290,6 +294,19 @@ export class AgendamentoComponent implements OnInit {
         error: (err) => console.error('Erro ao salvar:', err)
       });
     }
+  }
+
+  // função auxiliar para converter para ISO local sem shift de fuso
+  private toISOLocal(dateStr: string): string {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    // retorna ISO local: YYYY-MM-DDTHH:mm:ss (sem Z, sem milissegundos)
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   }
 
   cancelarAppointment(): void {
