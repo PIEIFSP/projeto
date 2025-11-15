@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { BarraLateralComponent } from '../shared/barra-lateral/barra-lateral.component';
 
 @Component({
   selector: 'app-financeiro',
-  imports: [BarraLateralComponent],
+  imports: [],
   templateUrl: './financeiro.component.html',
   styleUrl: './financeiro.component.css'
 })

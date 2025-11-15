@@ -14,8 +14,6 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/Unit" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/backend/tests/Feature" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/backend/tests/Unit" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/carbonphp/carbon-doctrine-types" />
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/composer" />
@@ -95,41 +93,6 @@
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/ifsp-pcc-projeto/backend/vendor/webmozart/assert" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/fakerphp/faker" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filp/whoops" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/hamcrest/hamcrest-php" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/laravel/pail" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/laravel/pint" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/laravel/sail" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/mockery/mockery" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/myclabs/deep-copy" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/nunomaduro/collision" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phar-io/manifest" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phar-io/version" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-code-coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-file-iterator" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-invoker" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-text-template" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/php-timer" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/phpunit/phpunit" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/cli-parser" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/code-unit" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/code-unit-reverse-lookup" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/comparator" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/complexity" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/diff" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/environment" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/exporter" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/global-state" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/lines-of-code" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/object-enumerator" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/object-reflector" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/recursion-context" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/type" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/sebastian/version" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/staabm/side-effects-detector" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/yaml" />
-      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/theseer/tokenizer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
