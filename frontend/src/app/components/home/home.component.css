@@ -5,9 +5,8 @@
     font-family: Arial, sans-serif;
 }
 
-
-
-/* aside {
+/* ======= SIDEBAR ======= */
+aside {
     width: 70px;
     background-color: #222;
     color: white;
@@ -21,6 +20,7 @@ aside.open {
     width: 250px;
 }
 
+/* Topo da barra lateral */
 .topo-sidebar {
     display: flex;
     align-items: center;
@@ -28,6 +28,7 @@ aside.open {
     padding: 1rem;
 }
 
+/* Container da logo */
 .logo-container {
     display: flex;
     align-items: center;
@@ -45,6 +46,7 @@ aside.open .logo {
     height: 60px;
 }
 
+/* Botão de abrir/fechar */
 .toggle-btn {
     background: none;
     border: none;
@@ -78,8 +80,7 @@ nav a:hover,
 nav a.active {
     background-color: #444;
     color: #fff;
-} */
-
+}
 
 /* ======= CONTEÚDO PRINCIPAL ======= */
 main {
