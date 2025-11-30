@@ -55,7 +55,27 @@
         "id_usuario": 2,
         "id_servico": 2,
         "data_hora_inicio": "2025-11-08T00:00",
-        "data_hora_fim": "2025-11-09T00:00",
+        "data_hora_fim": "",
+        "status": "CONFIRMADO",
+        "observacoes": "Férias"
+    },
+    {
+        "id_agendamento": 7,
+        "id_cliente": 4,
+        "id_usuario": 2,
+        "id_servico": 2,
+        "data_hora_inicio": "2025-11-08T09:00",
+        "data_hora_fim": "",
+        "status": "CONFIRMADO",
+        "observacoes": "Férias"
+    },
+    {
+        "id_agendamento": 8,
+        "id_cliente": 4,
+        "id_usuario": 2,
+        "id_servico": 2,
+        "data_hora_inicio": "2025-11-08T12:00",
+        "data_hora_fim": "",
         "status": "CONFIRMADO",
         "observacoes": "Férias"
     }

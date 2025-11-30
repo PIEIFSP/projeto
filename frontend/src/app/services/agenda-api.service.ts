@@ -36,19 +36,19 @@ export class AgendaApiService {
 
     //  Atualizar agendamento existente
     atualizar(id: number, agendamento: Partial<Agendamento>): Observable<Agendamento> {
-    console.log('Atualizando agendamento. ID:', id, 'Dados:', agendamento);
-    return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
-        headers: this.getAuthHeaders()
-    }).pipe(
-        tap(response => {
-            console.log('Resposta da atualização:', response);
-        }),
-        catchError(err => {
-            console.error('Erro na atualização do agendamento:', err);
-            return throwError(err);
-        })
-    );
-}
+        console.log('Atualizando agendamento. ID:', id, 'Dados:', agendamento);
+        return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
+            headers: this.getAuthHeaders()
+        }).pipe(
+            tap(response => {
+                console.log('Resposta da atualização:', response);
+            }),
+            catchError(err => {
+                console.error('Erro na atualização do agendamento:', err);
+                return throwError(err);
+            })
+        );
+    }
 
     // Excluir agendamento (remove definitivamente)
     excluir(id: number): Observable<void> {
@@ -57,9 +57,9 @@ export class AgendaApiService {
         });
     }
 
- // Cancelar agendamento 
+    // Cancelar agendamento 
     cancelar(id: number): Observable<void> {
-       // backend espera POST para cancelar
+        // backend espera POST para cancelar
         return this.http.post<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
             headers: this.getAuthHeaders()
         });
@@ -85,4 +85,12 @@ export class AgendaApiService {
             headers: this.getAuthHeaders()
         });
     }
+
+    //  Criar novo cliente
+    criarCliente(payload: Partial<Cliente>): Observable<Cliente> {
+    return this.http.post<Cliente>(`${this.baseUrl}/clientes`, payload, {
+        headers: this.getAuthHeaders()
+    });
+}
+
 }

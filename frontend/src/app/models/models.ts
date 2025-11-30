@@ -23,7 +23,7 @@ export type AppointmentStatus = 'REAGENDADO' | 'CONFIRMADO' | 'CANCELADO' | 'CON
 
 export interface Agendamento {
     id_agendamento: number;
-    id_cliente: number;
+    id_cliente: number | null;
     id_usuario: number;
     id_servico: number;
     data_hora_inicio: string;

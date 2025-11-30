@@ -1,243 +1,143 @@
-/* ...existing code... */
+/* === agendamento.component.css === */
 
-/* Layout: mantém a aparência atual, mas evita que a sidebar ocupe toda a largura */
+/* Layout geral do componente (usa a altura total já provida pelo global) */
 .container {
-    display: flex;
-    align-items: stretch;
-    gap: 20px;
-    box-sizing: border-box;
-}
-
-/* força a barra lateral a ter largura fixa e não empurrar o calendário para baixo */
-app-barra-lateral {
-    flex: 0 0 auto;
-    transition: width 220ms ease;
-    overflow: hidden;
-}
-
-app-barra-lateral.open+main,
-.container.sidebar-open main {
-    margin-left: 170px;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  gap: 20px;
+  box-sizing: border-box;
 }
 
 app-barra-lateral {
-    z-index: 2;
+  flex: 0 0 auto;
+  transition: width 220ms ease;
+  overflow: hidden;
+  z-index: 2;
 }
 
-/* Conteúdo principal ao lado da sidebar */
+/* Área principal que sobra para o calendário */
 main {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    width: 100%;
-    transition: margin-left 220ms ease, transform 220ms ease;
-    margin-left: 0;
-    position: relative;
-    z-index: 1;
-    margin-top: 10px;
-    padding: 32px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
-main>h2 {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 0;
-}
-
-/* mantém o calendário com largura máxima e centralizado dentro do main */
+/* container do calendário ocupa todo espaço restante */
 .calendar-container {
-    max-width: 900px;
-    width: 100%;
-    margin: 18px 0;
-    background: #fff;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    min-height: 560px;
-    height: auto;
+  flex: 1 1 0;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
 }
 
+/* --- Modal e formulário --- */
 dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: none;
-    border-radius: 12px;
-    padding: 24px;
-    width: 90%;
-    max-width: 420px;
-    max-height: 75vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    background: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
 
 dialog::backdrop {
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(2px);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
 }
 
-.modal-visualizar {
-  position: relative;
-  border-radius: 8px;
-  padding: 20px;
-}
-
+/* botão fechar X no canto */
 .btn-close-modal {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 12px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: #666;
-  padding: 5px 10px;
-  line-height: 1;
-  transition: color 0.2s ease;
 }
 
-.btn-close-modal:hover {
-  color: #000;
+/* organiza botões separados (Salvar à esquerda, Cancelar à direita) */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.actions .left {
+  display: flex;
+  gap: 8px;
 }
 
-input,
-select,
-textarea {
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 1rem;
-    background: #f9f9f9;
-    transition: all 0.2s ease;
-    outline: none;
-    color: #333;
+.actions .right {
+  margin-left: auto;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #ef7ac1;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(239, 122, 193, 0.2);
+/* form inputs */
+form { display:flex; flex-direction:column; gap:10px; }
+input, select, textarea {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: #fafafa;
 }
 
-/* estiliza placeholders para um visual mais leve */
-input::placeholder,
-textarea::placeholder {
-    color: #aaa;
-}
-
-/* ================================== */
-
-button {
-    margin-top: 10px;
-    padding: 8px;
-    border: none;
-    border-radius: 16px;
-    background: #ef7ac1;
-    color: white;
-    cursor: pointer;
-}
-
-/* Estilo do botão Cancelar */
-.cancelar-btn {
-    background-color: #dc3545;
-    /* Vermelho suave */
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 10px 18px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Efeito ao passar o mouse */
-.cancelar-btn:hover {
-    background-color: #b52a37;
-    transform: scale(1.05);
-}
-
-/* Efeito ao clicar */
-.cancelar-btn:active {
-    background-color: #9e1f2a;
-    transform: scale(0.97);
-}
-
-.autocomplete {
-    position: relative;
-}
-
+/* autocomplete dropdown */
+.autocomplete { position: relative; }
 .autocomplete .dropdown {
-    position: absolute;
-    z-index: 10;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ccc;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  position: absolute; z-index: 30; left: 0; right: 0; max-height: 240px; overflow-y:auto;
+  background: #fff; border: 1px solid #ddd; box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  list-style:none; padding:0; margin: 4px 0 0 0;
+}
+.autocomplete .dropdown li { padding:8px; cursor:pointer; }
+.autocomplete .dropdown li:hover { background:#f2f2f2; }
+
+.novo-cliente {
+    display: flex;
+    flex-direction: column; /* label acima do input */
+    gap: 4px;               /* espaço entre label e input */
+    margin-bottom: 12px;    /* opcional: espaço abaixo do campo */
 }
 
-.autocomplete .dropdown li {
-    padding: 8px;
-    cursor: pointer;
+
+/* botão padrão */
+button {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  background: #ef7ac1;
+  color: white;
 }
 
-.autocomplete .dropdown li:hover {
-    background: #f0f0f0;
+/* botão cancelar separado */
+.cancelar-btn {
+  background: #dc3545;
 }
 
-.autocomplete .dropdown .empty {
-    color: #666;
-    cursor: default;
-}
-
-.phone {
-    color: #666;
-    font-size: 0.9em;
-    margin-left: 6px;
-}
-
-/* Responsividade: empilha em telas pequenas (mantendo aparência) */
+/* responsividade */
 @media (max-width: 820px) {
-    .container {
-        flex-direction: column;
-        align-items: stretch;
-        min-height: auto;
-    }
-
-    app-barra-lateral {
-        flex: 0 0 auto;
-        width: 100%;
-        max-width: none;
-    }
-
-    main {
-        align-items: stretch;
-        justify-content: flex-start;
-        padding-top: 12px;
-    }
-
-    .calendar-container {
-        margin-top: 8px;
-    }
+  .calendar-container { padding: 0.6rem; }
+  .actions { flex-direction: column-reverse; align-items: stretch; }
 }
-
-
-/* ...existing code... */
