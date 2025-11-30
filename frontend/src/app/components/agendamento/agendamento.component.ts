@@ -175,7 +175,8 @@ calendarOptions: CalendarOptions = {
         title: `${timeLabel} — ${client?.nome || 'Cliente'} - ${service?.nome || 'Serviço'}`,
         start: a.data_hora_inicio,
         end: a.data_hora_fim,
-        extendedProps: a
+        extendedProps: a,
+        backgroundColor: '#ef7ac1'// bolinha rosa
       };
     });
   }
