@@ -12,6 +12,7 @@ class AgendamentoController extends Controller {
 
     public function index(Request $request) {
         $query = Agendamento::with(['cliente', 'servico', 'usuario']);
+        $query->where('Status', '!=', 'Cancelado');
         if ($request->has('usuario')) $query->where('ID_Usuario_FK', $request->usuario);
         if ($request->has('data')) $query->whereDate('Data_Hora_Inicio', $request->data);
 
