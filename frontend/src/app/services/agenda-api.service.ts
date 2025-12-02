@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Agendamento, Cliente, Usuario, Servico } from '../models/models';
 import { environment } from '../../environments/environment'; // import do environment
 
@@ -13,7 +13,8 @@ export class AgendaApiService {
 
     // Cria headers com token de autenticação
     private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
+        if (!token) return new HttpHeaders();
         return new HttpHeaders({
             Authorization: `Bearer ${token}`
         });
@@ -35,9 +36,18 @@ export class AgendaApiService {
 
     //  Atualizar agendamento existente
     atualizar(id: number, agendamento: Partial<Agendamento>): Observable<Agendamento> {
+        console.log('Atualizando agendamento. ID:', id, 'Dados:', agendamento);
         return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
             headers: this.getAuthHeaders()
-        });
+        }).pipe(
+            tap(response => {
+                console.log('Resposta da atualização:', response);
+            }),
+            catchError(err => {
+                console.error('Erro na atualização do agendamento:', err);
+                return throwError(err);
+            })
+        );
     }
 
     // Excluir agendamento (remove definitivamente)
@@ -47,13 +57,10 @@ export class AgendaApiService {
         });
     }
 
-    // Cancelar agendamento (caso o backend apenas mude status)
+    // Cancelar agendamento 
     cancelar(id: number): Observable<void> {
-        //  Caso o backend delete, mantenha DELETE
-        // return this.http.delete<void>(`${this.baseUrl}/agendamentos/${id}`, { headers: this.getAuthHeaders() });
-
-        //  Caso o backend apenas atualize o status:
-        return this.http.patch<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
+        // backend espera POST para cancelar
+        return this.http.post<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
             headers: this.getAuthHeaders()
         });
     }
@@ -78,4 +85,12 @@ export class AgendaApiService {
             headers: this.getAuthHeaders()
         });
     }
+
+    //  Criar novo cliente
+    criarCliente(payload: Partial<Cliente>): Observable<Cliente> {
+    return this.http.post<Cliente>(`${this.baseUrl}/clientes`, payload, {
+        headers: this.getAuthHeaders()
+    });
+}
+
 }

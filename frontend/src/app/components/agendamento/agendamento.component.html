@@ -4,36 +4,52 @@
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main>
-        <h2>Agenda de Serviços</h2>
-
         <div class="calendar-container">
             <full-calendar [options]="calendarOptions"></full-calendar>
         </div>
 
+        <!-- MODAL NOVO AGENDAMENTO -->
         <dialog id="modal-agendamento" #modalAgendamento>
+            <button class="btn-close-modal" (click)="fecharModal()">✕</button>
             <h3>Novo Agendamento</h3>
 
             <form #formAppointment="ngForm" autocomplete="on">
+
                 <label>Cliente:</label>
                 <div class="autocomplete">
-                    <input type="text" [(ngModel)]="novoAppointmentForm.clientNome" name="clientNome"
+                    <input type="text" [(ngModel)]="novoAppointmentForm.clienteNome" name="clienteNome"
                         (input)="filterClients()" (focus)="focusClients()" (blur)="hideClientDropdown()"
                         placeholder="Digite o nome do cliente" required />
+
                     <ul class="dropdown" *ngIf="showClientDropdown">
                         <li *ngFor="let c of filteredClients" (mousedown)="selectClient(c)">
-                            {{ c.nome }}<span class="phone" *ngIf="c.telefone"> — {{ c.telefone }}</span>
+                            {{ c.nome }} <span class="phone" *ngIf="c.telefone"> — {{ c.telefone }}</span>
                         </li>
                         <li *ngIf="filteredClients.length === 0" class="empty">Nenhum cliente encontrado</li>
                     </ul>
                 </div>
 
+                <div *ngIf="showClientNotFound" class="cliente-alerta">
+                    Cliente não encontrado. Deseja cadastrar?
+                    <button type="button" (click)="confirmarCadastroCliente(true)">Sim</button>
+                    <button type="button" (click)="confirmarCadastroCliente(false)">Não</button>
+                </div>
+
+                <div *ngIf="novoAppointmentForm.wantsRegisterClient" class="novo-cliente">
+                    <label>Telefone do Cliente:</label>
+                    <input type="text" [(ngModel)]="novoAppointmentForm.clienteTelefone" name="clienteTelefone"
+                        placeholder="(XX) XXXXX-XXXX" required />
+                </div>
+
                 <label>Profissional:</label>
                 <div class="autocomplete">
-                    <input type="text" [(ngModel)]="novoAppointmentForm.professionalNome" name="professionalNome"
+                    <input type="text" [(ngModel)]="novoAppointmentForm.usuarioNome" name="usuarioNome"
                         (input)="filterProfessionals()" (focus)="focusProfessionals()"
                         (blur)="hideProfessionalDropdown()" placeholder="Digite o nome do profissional" required />
+
                     <ul class="dropdown" *ngIf="showProfessionalDropdown">
-                        <li *ngFor="let p of filteredProfessionals" (mousedown)="selectProfessional(p)">{{ p.nome }}
+                        <li *ngFor="let p of filteredProfessionals" (mousedown)="selectProfessional(p)">
+                            {{ p.nome }}
                         </li>
                         <li *ngIf="filteredProfessionals.length === 0" class="empty">Nenhum profissional encontrado</li>
                     </ul>
@@ -41,9 +57,10 @@
 
                 <label>Serviço:</label>
                 <div class="autocomplete">
-                    <input type="text" [(ngModel)]="novoAppointmentForm.serviceNome" name="serviceNome"
+                    <input type="text" [(ngModel)]="novoAppointmentForm.servicoNome" name="servicoNome"
                         (input)="filterServices()" (focus)="focusServices()" (blur)="hideServiceDropdown()"
                         placeholder="Digite o nome do serviço" required />
+
                     <ul class="dropdown" *ngIf="showServiceDropdown">
                         <li *ngFor="let s of filteredServices" (mousedown)="selectService(s)">{{ s.nome }}</li>
                         <li *ngIf="filteredServices.length === 0" class="empty">Nenhum serviço encontrado</li>
@@ -51,27 +68,34 @@
                 </div>
 
                 <label>Início:</label>
-                <input type="datetime-local" [(ngModel)]="novoAppointmentForm.data_hora_inicio" name="start_at" required>
+                <input type="datetime-local" [(ngModel)]="novoAppointmentForm.data_hora_inicio" name="data_hora_inicio"
+                    required />
 
                 <label>Término:</label>
-                <input type="datetime-local" [(ngModel)]="novoAppointmentForm.data_hora_fim" name="end_at" required>
+                <input type="datetime-local" [(ngModel)]="novoAppointmentForm.data_hora_fim" name="data_hora_fim"
+                    required />
 
                 <label>Status:</label>
                 <select [(ngModel)]="novoAppointmentForm.status" name="status">
-                    <option value="AGENDADO">Agendado</option>
                     <option value="CONFIRMADO">Confirmado</option>
+                    <option value="REAGENDADO">Reagendado</option>
                     <option value="CANCELADO">Cancelado</option>
                 </select>
 
                 <label>Observações:</label>
                 <textarea [(ngModel)]="novoAppointmentForm.observacoes" name="observacoes"></textarea>
 
-                <button type="button" (click)="salvarAppointment()">Salvar</button>
-                <button type="button" (click)="fecharModal()">Cancelar</button>
+                <div class="actions">
+                    <button type="button" (click)="salvarAppointment()">Salvar</button>
+                    <button type="button" (click)="fecharModal()">Cancelar</button>
+                </div>
             </form>
         </dialog>
 
+        <!-- Modal Visualizar -->
         <dialog #modalVisualizar class="modal-visualizar">
+            <button class="btn-close-modal" (click)="fecharModalVisualizar()">✕</button>
+
             <h3>📅 Detalhes do Agendamento</h3>
 
             <div *ngIf="selectedAppointment">
@@ -84,7 +108,8 @@
                 <p><strong>Observações:</strong> {{ selectedAppointment.observacoes }}</p>
             </div>
 
-            <button (click)="fecharModalVisualizar()">Fechar</button>
+            <button (click)="reagendarAppointment()" class="btn btn-primary">Reagendar</button>
+
             <button *ngIf="selectedAppointment?.status !== 'CANCELADO'" type="button" (click)="cancelarAppointment()"
                 class="cancelar-btn">
                 Cancelar Agendamento

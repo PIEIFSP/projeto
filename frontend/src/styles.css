@@ -1,14 +1,89 @@
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 
-*{
+/* ------------ BASE ------------ */
+
+* {
   margin: 0;
   padding: 0;
-  box-sizing: 0;
+  box-sizing: border-box;
 }
 
-html, body{
+html, body {
   height: 100%;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* ===============================
+      FULLCALENDAR AJUSTES
+   =============================== */
+
+/* Altura fixa das células */
+.fc .fc-daygrid-day-frame {
+    height: 120px !important;
+    display: flex !important;
+    flex-direction: column;
+    padding: 3px !important;
+    overflow: hidden !important;
+    position: relative;
+}
+
+/* Área do topo do dia (ONDE FICA O NÚMERO) */
+.fc .fc-daygrid-day-top {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 24px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Número do dia */
+.fc .fc-daygrid-day-number {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    width: 100%;
+    text-align: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 10 !important;      /* aumentar o z-index */
+    position: relative !important; /* necessário para z-index funcionar */
+}
+
+/* Área dos eventos */
+.fc .fc-daygrid-day-events {
+    margin-top: 28px !important;  /* afasta os eventos para não sobrepor o número */
+    overflow: hidden !important;
+    flex-grow: 1;
+    position: relative;
+    z-index: 1;                    /* menor que o número do dia */
+}
+
+/* Event interno do calendário */
+.fc-event {
+    border-radius: 6px !important;
+    padding: 1px 4px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 1;                    
+}
+
+/* “+X mais” corrigido */
+.fc .fc-daygrid-more-link {
+    display: block !important;
+    margin-top: 2px !important;
+    font-size: 0.75rem !important;
+    color: #ef7ac1 !important;
+    font-weight: 600;
+}
+
+/* Mantém todas as linhas com altura igual */
+.fc .fc-daygrid-body table {
+    table-layout: fixed !important;
+}
+
