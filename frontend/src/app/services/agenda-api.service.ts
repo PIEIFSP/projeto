@@ -13,7 +13,7 @@ export class AgendaApiService {
 
     // Cria headers com token de autenticação
     private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         if (!token) return new HttpHeaders();
         return new HttpHeaders({
             Authorization: `Bearer ${token}`

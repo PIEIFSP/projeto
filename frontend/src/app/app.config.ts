@@ -10,13 +10,21 @@ import {
   Scissors
 } from 'lucide-angular';
 
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors} from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+
+    provideHttpClient(
+      withInterceptors([
+        AuthInterceptor
+      ])
+    ),
+
+    
     importProvidersFrom(
       LucideAngularModule.pick({
         House,
