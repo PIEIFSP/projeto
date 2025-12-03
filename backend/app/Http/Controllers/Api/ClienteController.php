@@ -8,8 +8,12 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller {
     public function store(Request $request) {
-        $data = $request->validate(['Nome'=>'required', 'Telefone'=>'nullable']);
-        return response()->json(Cliente::create($data), 201);
+        $data = $request->validate(['nome'=>'required', 'telefone'=>'nullable']);
+        $cliente = Cliente::create(['Nome' => $data['nome'], 'Telefone' => $data['telefone']]);
+        return response()->json(
+            ['id_cliente' => $cliente->ID_Cliente, 'nome' => $cliente->Nome, 'telefone' => $cliente->Telefone],
+            201
+        );
     }
 
     /**
