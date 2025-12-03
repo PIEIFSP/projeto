@@ -1,8 +1,10 @@
+export type NivelAcesso = 'ADMIN' | 'PADRAO';
 export interface Usuario {
     id_usuario: number;
     nome: string;
-    cargo?: string;
-    foto?: string;
+    telefone:string;
+    email: string;
+    perfil: NivelAcesso;
 }
 
 export interface Cliente {
