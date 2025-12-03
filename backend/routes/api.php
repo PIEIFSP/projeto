@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/agendamentos', [AgendamentoController::class, 'index']);
     Route::get('/agendamentos/cliente/{id}', [AgendamentoController::class, 'buscarPorCliente']);
     Route::post('/agendamentos', [AgendamentoController::class, 'store']);
-    Route::put('/agendamentos/{id}', [AgendamentoController::class, 'update']);
+    Route::post('/agendamentos/{id}', [AgendamentoController::class, 'update']);
     Route::post('/agendamentos/{id}/cancelar', [AgendamentoController::class, 'cancelar']);
     Route::post('/agendamentos/{id}/concluir', [AgendamentoController::class, 'concluir']);
 
