@@ -13,7 +13,7 @@ Route::get('/health', function () {
 
 Route::post('/login', [AuthController::class, 'login']);
 
-//Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{user}', [UserController::class, 'show']);
     Route::get('/profissionais', [UserController::class, 'index']);
 
@@ -29,4 +29,4 @@ Route::post('/login', [AuthController::class, 'login']);
     Route::get('/servicos', [ServicoController::class, 'index']);
 
     Route::get('/clientes', [ClienteController::class, 'index']);
-//});
+});
