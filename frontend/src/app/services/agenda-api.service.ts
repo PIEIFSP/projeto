@@ -37,7 +37,7 @@ export class AgendaApiService {
     //  Atualizar agendamento existente
     atualizar(id: number, agendamento: Partial<Agendamento>): Observable<Agendamento> {
         console.log('Atualizando agendamento. ID:', id, 'Dados:', agendamento);
-        return this.http.put<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
+        return this.http.post<Agendamento>(`${this.baseUrl}/agendamentos/${id}`, agendamento, {
             headers: this.getAuthHeaders()
         }).pipe(
             tap(response => {
@@ -57,7 +57,7 @@ export class AgendaApiService {
         });
     }
 
-    // Cancelar agendamento 
+    // Cancelar agendamento
     cancelar(id: number): Observable<void> {
         // backend espera POST para cancelar
         return this.http.post<void>(`${this.baseUrl}/agendamentos/${id}/cancelar`, {}, {
