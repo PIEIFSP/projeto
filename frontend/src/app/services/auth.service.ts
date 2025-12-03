@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-// Define uma interface para a resposta de sucesso do login
 export interface AuthResponse {
   message: string;
-  // Ajustado para 'token', conforme a resposta do backend
   token: string;
   user: any;
 }
@@ -15,17 +14,39 @@ export interface AuthResponse {
 })
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.apiUrl;
+
+
+  public static readonly tokenKey = 'authToken';
 
   constructor(private http: HttpClient) { }
 
   /**
-   * Envia as credenciais para a API fazer o login.
-   * @param credentials Objeto com 'email' e 'password'.
-   * @returns Um Observable com a resposta da API.
+   * Login
    */
   login(credentials: { email: string; password: string }): Observable<AuthResponse> {
-    // Faz a chamada POST para o endpoint /login do seu backend
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
+  }
+
+  /**
+   * Logout
+   */
+  logout(): void {
+   
+    const token = localStorage.getItem(AuthService.tokenKey);
+
+    if (token) {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      this.http.post(`${this.apiUrl}/logout`, {}, { headers }).subscribe({
+        next: () => console.log('Logout efetuado na API.'),
+        error: (err) => console.error('Erro no logout da API', err)
+      });
+    }
+
+    // Limpeza local
+    localStorage.removeItem(AuthService.tokenKey);
   }
 }

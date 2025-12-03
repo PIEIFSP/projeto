@@ -1,4 +1,4 @@
- .page-layout {
+/*  .page-layout {
    display: flex;
    min-height: 100vh;
    width: 100%;
@@ -16,3 +16,32 @@
    box-sizing: border-box;
    overflow-x: hidden;
  }
+ */
+ .page-layout {
+   display: flex;
+   min-height: 100vh;
+   width: 100%;
+   background-color: #f6f6f6;
+ }
+
+ app-barra-lateral {
+   flex-shrink: 0;
+ }
+
+ main.content-area {
+   flex-grow: 1;
+   padding: 92px 100px;
+   margin: 0;
+   box-sizing: border-box;
+   overflow-x: hidden;
+   display: flex;
+   justify-content: center;
+   align-items: center
+ }
+
+
+.develop {
+  max-width: 500px;
+  width: 100%;
+  height: auto;
+}

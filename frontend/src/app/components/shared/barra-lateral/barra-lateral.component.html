@@ -35,7 +35,7 @@
                 <span *ngIf="sidebarOpen">Usuários</span>
             </a>
 
-            <a routerLink="/login" routerLinkActive="active">
+           <a (click)="logout()" routerLinkActive="active" class="logout-btn" style="cursor: pointer;">
                 <lucide-icon name="log-out" class="icon"></lucide-icon>
                 <span *ngIf="sidebarOpen">Sair</span>
             </a>
